@@ -74,7 +74,9 @@ export function vitemoji(options: VitemojiOptions = {}): Plugin {
   };
 }
 
-function createTextMap(matchBy: Required<VitemojiMatchBy>): Record<string, string> {
+function createTextMap(
+  matchBy: Required<VitemojiMatchBy>,
+): Record<string, string> {
   const textMap: Record<string, string> = {};
 
   for (const entry of DEFAULT_EMOJI_ENTRIES) {

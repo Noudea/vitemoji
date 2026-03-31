@@ -53,6 +53,45 @@ export function transformUiText(
         changed = true;
       }
     },
+
+    JSXExpressionContainer(path) {
+      if (path.parent.type !== "JSXElement" && path.parent.type !== "JSXFragment") {
+        return;
+      }
+
+      const { expression } = path.node;
+
+      if (expression.type === "StringLiteral") {
+        const nextValue = rewriteText(expression.value, textMap, matchPattern);
+
+        if (nextValue !== expression.value) {
+          expression.value = nextValue;
+          changed = true;
+        }
+
+        return;
+      }
+
+      if (expression.type !== "TemplateLiteral") {
+        return;
+      }
+
+      for (const quasi of expression.quasis) {
+        const cookedValue = quasi.value.cooked;
+
+        if (cookedValue == null) {
+          continue;
+        }
+
+        const nextValue = rewriteText(cookedValue, textMap, matchPattern);
+
+        if (nextValue !== cookedValue) {
+          quasi.value.cooked = nextValue;
+          quasi.value.raw = escapeTemplateRaw(nextValue);
+          changed = true;
+        }
+      }
+    },
   });
 
   if (!changed) {
@@ -109,4 +148,15 @@ function hasTokenChar(value: string | undefined): boolean {
 
 function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function escapeTemplateRaw(value: string): string {
+  return value
+    .replace(/\\/g, "\\\\")
+    .replace(/`/g, "\\`")
+    .replace(/\$\{/g, "\\${")
+    .replace(/\r/g, "\\r")
+    .replace(/\n/g, "\\n")
+    .replace(/\u2028/g, "\\u2028")
+    .replace(/\u2029/g, "\\u2029");
 }
