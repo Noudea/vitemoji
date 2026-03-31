@@ -44,7 +44,7 @@ export interface VitemojiOptions {
   include?: RegExp;
   locales?: VitemojiLocale[];
   preset?: VitemojiPreset;
-  shortcodePreset?: VitemojiShortcodePreset;
+  shortcodePresets?: VitemojiShortcodePreset[];
   matchBy?: VitemojiMatchBy;
 }
 
@@ -52,12 +52,12 @@ export interface ResolvedVitemojiOptions {
   include: RegExp;
   locales: VitemojiLocale[];
   matchBy: Required<VitemojiMatchBy>;
-  shortcodePreset: VitemojiShortcodePreset;
+  shortcodePresets: VitemojiShortcodePreset[];
 }
 
 const DEFAULT_INCLUDE = /\.[jt]sx$/;
 const DEFAULT_LOCALES: VitemojiLocale[] = ["en"];
-const DEFAULT_SHORTCODE_PRESET: VitemojiShortcodePreset = "github";
+const DEFAULT_SHORTCODE_PRESETS: VitemojiShortcodePreset[] = ["github"];
 
 const DEFAULT_MATCH_BY: Required<VitemojiMatchBy> = {
   shortcodes: true,
@@ -95,7 +95,7 @@ export function resolveVitemojiOptions(
       ...baseMatchBy,
       ...options.matchBy,
     },
-    shortcodePreset: options.shortcodePreset ?? DEFAULT_SHORTCODE_PRESET,
+    shortcodePresets: resolveShortcodePresets(options),
   };
 }
 
@@ -104,4 +104,15 @@ function resolveLocales(options: VitemojiOptions): VitemojiLocale[] {
   const normalizedLocales = Array.from(new Set(locales));
 
   return normalizedLocales.length > 0 ? normalizedLocales : DEFAULT_LOCALES;
+}
+
+function resolveShortcodePresets(
+  options: VitemojiOptions,
+): VitemojiShortcodePreset[] {
+  const shortcodePresets = options.shortcodePresets ?? DEFAULT_SHORTCODE_PRESETS;
+  const normalizedShortcodePresets = Array.from(new Set(shortcodePresets));
+
+  return normalizedShortcodePresets.length > 0
+    ? normalizedShortcodePresets
+    : DEFAULT_SHORTCODE_PRESETS;
 }

@@ -8,8 +8,20 @@ export default defineConfig({
     react(),
     vitemoji({
       preset: "chaos",
-      locales: ["en", "fr", "zh", "ja", "ru", "sv", "zh"],
-      shortcodePreset: "emojibase",
+      locales: [
+        "en",
+        "fr",
+        "zh",
+        "ja",
+        "ru",
+        "sv",
+        "zh",
+        "bn",
+        "da",
+        "es",
+        "hi",
+      ],
+      shortcodePresets: ["emojibase", "github", "cldr"],
     }),
   ],
 });

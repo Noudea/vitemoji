@@ -33,18 +33,20 @@ const supportedShortcodeLocalesCache = new Map<
 
 export function loadEmojibaseEntries(
   locales: readonly VitemojiLocale[],
-  shortcodePreset: VitemojiShortcodePreset,
+  shortcodePresets: readonly VitemojiShortcodePreset[],
 ): EmojiEntry[] {
-  const cacheKey = `${locales.join(",")}:${shortcodePreset}`;
+  const cacheKey = `${locales.join(",")}:${shortcodePresets.join(",")}`;
   const cachedEntries = emojiEntryCache.get(cacheKey);
 
   if (cachedEntries) {
     return cachedEntries;
   }
 
-  validateShortcodePresetLocales(locales, shortcodePreset);
+  validateShortcodePresetLocales(locales, shortcodePresets);
 
-  const entries = locales.flatMap((locale) => loadLocaleEmojibaseEntries(locale, shortcodePreset));
+  const entries = locales.flatMap((locale) =>
+    loadLocaleEmojibaseEntries(locale, shortcodePresets),
+  );
 
   emojiEntryCache.set(cacheKey, entries);
 
@@ -53,14 +55,14 @@ export function loadEmojibaseEntries(
 
 function loadLocaleEmojibaseEntries(
   locale: VitemojiLocale,
-  shortcodePreset: VitemojiShortcodePreset,
+  shortcodePresets: readonly VitemojiShortcodePreset[],
 ): EmojiEntry[] {
   const compactEmojis = loadCompactEmojis(locale);
-  const shortcodesByHexcode = loadShortcodes(locale, shortcodePreset);
+  const shortcodesByHexcode = loadShortcodes(locale, shortcodePresets);
 
   return compactEmojis.map((emoji) => ({
     emoji: emoji.unicode,
-    shortcodes: toShortcodes(shortcodesByHexcode[emoji.hexcode]),
+    shortcodes: shortcodesByHexcode[emoji.hexcode] ?? [],
     names: toTokens(emoji.label),
     keywords: toTokens(emoji.tags),
     hexcodes: [emoji.hexcode],
@@ -68,16 +70,47 @@ function loadLocaleEmojibaseEntries(
 }
 
 function loadCompactEmojis(locale: VitemojiLocale): CompactEmoji[] {
-  return requireDataset<CompactEmoji[]>(`emojibase-data/${locale}/compact.json`);
+  return requireDataset<CompactEmoji[]>(
+    `emojibase-data/${locale}/compact.json`,
+  );
 }
 
 function loadShortcodes(
   locale: VitemojiLocale,
-  shortcodePreset: VitemojiShortcodePreset,
-): Record<string, ShortcodeValue> {
-  return requireDataset<Record<string, ShortcodeValue>>(
-    `emojibase-data/${locale}/shortcodes/${shortcodePreset}.json`,
-  );
+  shortcodePresets: readonly VitemojiShortcodePreset[],
+): Record<string, string[]> {
+  const shortcodesByHexcode: Record<string, string[]> = {};
+  const claimedShortcodes = new Set<string>();
+
+  for (const shortcodePreset of shortcodePresets) {
+    if (!hasShortcodeDataset(locale, shortcodePreset)) {
+      continue;
+    }
+
+    const presetShortcodes = requireDataset<Record<string, ShortcodeValue>>(
+      `emojibase-data/${locale}/shortcodes/${shortcodePreset}.json`,
+    );
+
+    for (const [hexcode, shortcodeValue] of Object.entries(presetShortcodes)) {
+      const shortcodeTokens = toShortcodes(shortcodeValue);
+
+      for (const shortcodeToken of shortcodeTokens) {
+        if (claimedShortcodes.has(shortcodeToken)) {
+          continue;
+        }
+
+        claimedShortcodes.add(shortcodeToken);
+
+        if (!shortcodesByHexcode[hexcode]) {
+          shortcodesByHexcode[hexcode] = [];
+        }
+
+        shortcodesByHexcode[hexcode].push(shortcodeToken);
+      }
+    }
+  }
+
+  return shortcodesByHexcode;
 }
 
 function requireDataset<T>(path: string): T {
@@ -92,19 +125,27 @@ function requireDataset<T>(path: string): T {
 
 function validateShortcodePresetLocales(
   locales: readonly VitemojiLocale[],
-  shortcodePreset: VitemojiShortcodePreset,
+  shortcodePresets: readonly VitemojiShortcodePreset[],
 ): void {
-  const supportedLocales = getSupportedShortcodePresetLocales(shortcodePreset);
   const unsupportedLocales = locales.filter(
-    (locale) => !supportedLocales.includes(locale),
+    (locale) =>
+      !shortcodePresets.some((shortcodePreset) =>
+        hasShortcodeDataset(locale, shortcodePreset),
+      ),
   );
 
   if (unsupportedLocales.length === 0) {
     return;
   }
 
+  const presetSupport = shortcodePresets.map((shortcodePreset) => {
+    const supportedLocales = getSupportedShortcodePresetLocales(shortcodePreset);
+
+    return `- "${shortcodePreset}" supports: ${supportedLocales.join(", ")}.`;
+  });
+
   throw new Error(
-    `[vitemoji] The "${shortcodePreset}" shortcode preset does not support locales: ${unsupportedLocales.join(", ")}. Supported locales: ${supportedLocales.join(", ")}.`,
+    `[vitemoji] None of the requested shortcode presets support locales: ${unsupportedLocales.join(", ")}.\nRequested locales: ${locales.join(", ")}\nRequested shortcodePresets: ${shortcodePresets.join(", ")}\n${presetSupport.join("\n")}`,
   );
 }
 
@@ -131,7 +172,9 @@ function hasShortcodeDataset(
   shortcodePreset: VitemojiShortcodePreset,
 ): boolean {
   try {
-    require.resolve(`emojibase-data/${locale}/shortcodes/${shortcodePreset}.json`);
+    require.resolve(
+      `emojibase-data/${locale}/shortcodes/${shortcodePreset}.json`,
+    );
 
     return true;
   } catch {
@@ -144,7 +187,9 @@ function toShortcodes(value: ShortcodeValue | undefined): string[] {
     return [];
   }
 
-  return toTokens(Array.isArray(value) ? value.map((item) => `:${item}:`) : `:${value}:`);
+  return toTokens(
+    Array.isArray(value) ? value.map((item) => `:${item}:`) : `:${value}:`,
+  );
 }
 
 function toTokens(value: string | string[] | undefined): string[] {
