@@ -7,25 +7,28 @@ export interface TextTransformResult {
   changed: boolean;
 }
 
-export const DEFAULT_TEXT_MAP: Record<string, string> = {
-  fire: "🔥",
-  hello: "👋",
-  world: "🌍",
-  smile: "😀",
-};
-
 const generate = ((generateModule as { default?: typeof generateModule })
   .default ?? generateModule) as typeof import("@babel/generator").default;
 
 const traverse = ((traverseModule as { default?: typeof traverseModule })
   .default ?? traverseModule) as typeof import("@babel/traverse").default;
 
-const WORD_PATTERN = /[A-Za-z][A-Za-z'-]*/g;
+const TOKEN_CHAR_PATTERN = /[\p{L}\p{N}]/u;
+const TOKEN_CHAR_CLASS = String.raw`[\p{L}\p{N}]`;
 
 export function transformUiText(
   code: string,
   textMap: Record<string, string>,
 ): TextTransformResult {
+  const matchPattern = createMatchPattern(textMap);
+
+  if (matchPattern === null) {
+    return {
+      code,
+      changed: false,
+    };
+  }
+
   let changed = false;
   let ast: ReturnType<typeof parse>;
 
@@ -43,7 +46,7 @@ export function transformUiText(
 
   traverse(ast, {
     JSXText(path) {
-      const nextValue = rewriteText(path.node.value, textMap);
+      const nextValue = rewriteText(path.node.value, textMap, matchPattern);
 
       if (nextValue !== path.node.value) {
         path.node.value = nextValue;
@@ -65,9 +68,45 @@ export function transformUiText(
   };
 }
 
-function rewriteText(value: string, textMap: Record<string, string>): string {
+function createMatchPattern(textMap: Record<string, string>): RegExp | null {
+  const keys = Object.keys(textMap);
+
+  if (keys.length === 0) {
+    return null;
+  }
+
+  return new RegExp(
+    keys
+      .sort((left, right) => right.length - left.length)
+      .map((key) => toPatternSource(key))
+      .join("|"),
+    "giu",
+  );
+}
+
+function rewriteText(
+  value: string,
+  textMap: Record<string, string>,
+  matchPattern: RegExp,
+): string {
   return value.replace(
-    WORD_PATTERN,
+    matchPattern,
     (word) => textMap[word.toLowerCase()] ?? word,
   );
+}
+
+function toPatternSource(value: string): string {
+  const escapedValue = escapeRegExp(value);
+  const startsWithToken = hasTokenChar(value.at(0));
+  const endsWithToken = hasTokenChar(value.at(-1));
+
+  return `${startsWithToken ? `(?<!${TOKEN_CHAR_CLASS})` : ""}${escapedValue}${endsWithToken ? `(?!${TOKEN_CHAR_CLASS})` : ""}`;
+}
+
+function hasTokenChar(value: string | undefined): boolean {
+  return value !== undefined && TOKEN_CHAR_PATTERN.test(value);
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
