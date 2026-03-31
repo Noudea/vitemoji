@@ -52,7 +52,10 @@ export function transformUiText(
     },
 
     JSXExpressionContainer(path) {
-      if (path.parent.type !== "JSXElement" && path.parent.type !== "JSXFragment") {
+      if (
+        path.parent.type !== "JSXElement" &&
+        path.parent.type !== "JSXFragment"
+      ) {
         return;
       }
 

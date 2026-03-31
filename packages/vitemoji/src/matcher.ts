@@ -255,18 +255,17 @@ function getNextCodePointIndex(value: string, index: number): number {
   return index + getCodePointAt(value, index).length;
 }
 
-function getPreviousCodePoint(value: string, index: number): string | undefined {
+function getPreviousCodePoint(
+  value: string,
+  index: number,
+): string | undefined {
   if (index <= 0) {
     return undefined;
   }
 
   const lastCodeUnit = value.charCodeAt(index - 1);
 
-  if (
-    lastCodeUnit >= 0xdc00 &&
-    lastCodeUnit <= 0xdfff &&
-    index >= 2
-  ) {
+  if (lastCodeUnit >= 0xdc00 && lastCodeUnit <= 0xdfff && index >= 2) {
     const previousCodeUnit = value.charCodeAt(index - 2);
 
     if (previousCodeUnit >= 0xd800 && previousCodeUnit <= 0xdbff) {

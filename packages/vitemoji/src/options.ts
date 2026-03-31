@@ -109,7 +109,8 @@ function resolveLocales(options: VitemojiOptions): VitemojiLocale[] {
 function resolveShortcodePresets(
   options: VitemojiOptions,
 ): VitemojiShortcodePreset[] {
-  const shortcodePresets = options.shortcodePresets ?? DEFAULT_SHORTCODE_PRESETS;
+  const shortcodePresets =
+    options.shortcodePresets ?? DEFAULT_SHORTCODE_PRESETS;
   const normalizedShortcodePresets = Array.from(new Set(shortcodePresets));
 
   return normalizedShortcodePresets.length > 0
