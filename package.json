@@ -5,7 +5,7 @@
   "type": "module",
   "workspaces": [
     "packages/*",
-    "playground"
+    "apps/*"
   ],
   "scripts": {
     "build": "npm run build -w vitemoji && npm run build -w playground",

@@ -5,7 +5,7 @@
 ## Workspace
 
 - `packages/vitemoji`: the plugin package
-- `playground`: a local React + Vite app
+- `apps/playground`: a local React + Vite app
 
 ## Current Scope
 

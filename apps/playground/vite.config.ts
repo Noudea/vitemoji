@@ -1,7 +1,7 @@
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
-import { vitemoji } from "../packages/vitemoji/src/index.ts";
+import { vitemoji } from "../../packages/vitemoji/src/index.ts";
 
 export default defineConfig({
   plugins: [
@@ -19,9 +19,9 @@ export default defineConfig({
         "bn",
         "da",
         "es",
-        "hi",
+        "hi"
       ],
-      shortcodePresets: ["emojibase", "github", "cldr", "joypixels", "discord"],
-    }),
-  ],
+      shortcodePresets: ["emojibase", "github", "cldr", "joypixels", "discord"]
+    })
+  ]
 });
