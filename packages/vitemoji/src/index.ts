@@ -4,4 +4,5 @@ export type {
   VitemojiMatchBy,
   VitemojiOptions,
   VitemojiPreset,
+  VitemojiShortcodePreset,
 } from "./options.js";

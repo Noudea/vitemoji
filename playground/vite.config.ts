@@ -4,5 +4,8 @@ import { defineConfig } from "vite";
 import { vitemoji } from "../packages/vitemoji/src/index.ts";
 
 export default defineConfig({
-  plugins: [react(), vitemoji({ preset: "chaos" })],
+  plugins: [
+    react(),
+    vitemoji({ preset: "chaos", locale: "en", shortcodePreset: "github" }),
+  ],
 });
