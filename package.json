@@ -10,6 +10,7 @@
   "scripts": {
     "build": "npm run build -w vitemoji && npm run build -w playground",
     "dev": "npm run dev -w playground",
+    "test": "npm run test -w vitemoji",
     "typecheck": "npm run typecheck -w vitemoji && npm run typecheck -w playground"
   },
   "devDependencies": {

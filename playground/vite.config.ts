@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [
     react(),
     vitemoji({
-      preset: "chaos",
+      preset: "safe",
       locales: [
         "en",
         "fr",
