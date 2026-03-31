@@ -1,6 +1,10 @@
 import { createRequire } from "node:module";
 
-import type { VitemojiShortcodePreset } from "../options.js";
+import {
+  VITEMOJI_LOCALES,
+  type VitemojiLocale,
+  type VitemojiShortcodePreset,
+} from "../options.js";
 
 const require = createRequire(import.meta.url);
 
@@ -22,39 +26,53 @@ interface CompactEmoji {
 type ShortcodeValue = string | string[];
 
 const emojiEntryCache = new Map<string, EmojiEntry[]>();
+const supportedShortcodeLocalesCache = new Map<
+  VitemojiShortcodePreset,
+  readonly VitemojiLocale[]
+>();
 
 export function loadEmojibaseEntries(
-  locale: string,
+  locales: readonly VitemojiLocale[],
   shortcodePreset: VitemojiShortcodePreset,
 ): EmojiEntry[] {
-  const cacheKey = `${locale}:${shortcodePreset}`;
+  const cacheKey = `${locales.join(",")}:${shortcodePreset}`;
   const cachedEntries = emojiEntryCache.get(cacheKey);
 
   if (cachedEntries) {
     return cachedEntries;
   }
 
-  const compactEmojis = loadCompactEmojis(locale);
-  const shortcodesByHexcode = loadShortcodes(locale, shortcodePreset);
-  const entries = compactEmojis.map((emoji) => ({
-    emoji: emoji.unicode,
-    shortcodes: toShortcodes(shortcodesByHexcode[emoji.hexcode]),
-    names: toTokens(emoji.label),
-    keywords: toTokens(emoji.tags),
-    hexcodes: [emoji.hexcode],
-  }));
+  validateShortcodePresetLocales(locales, shortcodePreset);
+
+  const entries = locales.flatMap((locale) => loadLocaleEmojibaseEntries(locale, shortcodePreset));
 
   emojiEntryCache.set(cacheKey, entries);
 
   return entries;
 }
 
-function loadCompactEmojis(locale: string): CompactEmoji[] {
+function loadLocaleEmojibaseEntries(
+  locale: VitemojiLocale,
+  shortcodePreset: VitemojiShortcodePreset,
+): EmojiEntry[] {
+  const compactEmojis = loadCompactEmojis(locale);
+  const shortcodesByHexcode = loadShortcodes(locale, shortcodePreset);
+
+  return compactEmojis.map((emoji) => ({
+    emoji: emoji.unicode,
+    shortcodes: toShortcodes(shortcodesByHexcode[emoji.hexcode]),
+    names: toTokens(emoji.label),
+    keywords: toTokens(emoji.tags),
+    hexcodes: [emoji.hexcode],
+  }));
+}
+
+function loadCompactEmojis(locale: VitemojiLocale): CompactEmoji[] {
   return requireDataset<CompactEmoji[]>(`emojibase-data/${locale}/compact.json`);
 }
 
 function loadShortcodes(
-  locale: string,
+  locale: VitemojiLocale,
   shortcodePreset: VitemojiShortcodePreset,
 ): Record<string, ShortcodeValue> {
   return requireDataset<Record<string, ShortcodeValue>>(
@@ -69,6 +87,55 @@ function requireDataset<T>(path: string): T {
     throw new Error(`Unable to load vitemoji dataset: ${path}`, {
       cause: error,
     });
+  }
+}
+
+function validateShortcodePresetLocales(
+  locales: readonly VitemojiLocale[],
+  shortcodePreset: VitemojiShortcodePreset,
+): void {
+  const supportedLocales = getSupportedShortcodePresetLocales(shortcodePreset);
+  const unsupportedLocales = locales.filter(
+    (locale) => !supportedLocales.includes(locale),
+  );
+
+  if (unsupportedLocales.length === 0) {
+    return;
+  }
+
+  throw new Error(
+    `[vitemoji] The "${shortcodePreset}" shortcode preset does not support locales: ${unsupportedLocales.join(", ")}. Supported locales: ${supportedLocales.join(", ")}.`,
+  );
+}
+
+function getSupportedShortcodePresetLocales(
+  shortcodePreset: VitemojiShortcodePreset,
+): readonly VitemojiLocale[] {
+  const cachedLocales = supportedShortcodeLocalesCache.get(shortcodePreset);
+
+  if (cachedLocales) {
+    return cachedLocales;
+  }
+
+  const supportedLocales = VITEMOJI_LOCALES.filter((locale) =>
+    hasShortcodeDataset(locale, shortcodePreset),
+  );
+
+  supportedShortcodeLocalesCache.set(shortcodePreset, supportedLocales);
+
+  return supportedLocales;
+}
+
+function hasShortcodeDataset(
+  locale: VitemojiLocale,
+  shortcodePreset: VitemojiShortcodePreset,
+): boolean {
+  try {
+    require.resolve(`emojibase-data/${locale}/shortcodes/${shortcodePreset}.json`);
+
+    return true;
+  } catch {
+    return false;
   }
 }
 

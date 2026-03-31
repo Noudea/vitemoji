@@ -6,8 +6,8 @@ import { resolveVitemojiOptions, type VitemojiOptions } from "./options.js";
 import { transformUiText } from "./transforms/ui-text.js";
 
 export function vitemoji(options: VitemojiOptions = {}): Plugin {
-  const { include, locale, matchBy, shortcodePreset } = resolveVitemojiOptions(options);
-  const emojiEntries = loadEmojibaseEntries(locale, shortcodePreset);
+  const { include, locales, matchBy, shortcodePreset } = resolveVitemojiOptions(options);
+  const emojiEntries = loadEmojibaseEntries(locales, shortcodePreset);
   const emojiMatcher = createEmojiMatcher(createEmojiMatchMaps(emojiEntries, matchBy));
 
   return {

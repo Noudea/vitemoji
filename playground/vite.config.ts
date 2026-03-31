@@ -6,6 +6,10 @@ import { vitemoji } from "../packages/vitemoji/src/index.ts";
 export default defineConfig({
   plugins: [
     react(),
-    vitemoji({ preset: "chaos", locale: "en", shortcodePreset: "github" }),
+    vitemoji({
+      preset: "chaos",
+      locales: ["en", "fr", "zh", "ja", "ru", "sv", "zh"],
+      shortcodePreset: "emojibase",
+    }),
   ],
 });

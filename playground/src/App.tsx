@@ -7,6 +7,7 @@ export default function App() {
       <p>fire compiler</p>
       <p>{"hello world"}</p>
       <p>{`smile ${name}`}</p>
+      <p>:fire:</p>
     </main>
   );
 }

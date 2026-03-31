@@ -1,5 +1,37 @@
 export type VitemojiPreset = "safe" | "chaos";
 export type VitemojiShortcodePreset = "github" | "emojibase" | "cldr";
+export const VITEMOJI_LOCALES = [
+  "bn",
+  "da",
+  "de",
+  "en",
+  "en-gb",
+  "es",
+  "es-mx",
+  "et",
+  "fi",
+  "fr",
+  "hi",
+  "hu",
+  "it",
+  "ja",
+  "ko",
+  "lt",
+  "ms",
+  "nb",
+  "nl",
+  "pl",
+  "pt",
+  "ru",
+  "sv",
+  "th",
+  "uk",
+  "vi",
+  "zh",
+  "zh-hant",
+] as const;
+
+export type VitemojiLocale = (typeof VITEMOJI_LOCALES)[number];
 
 export interface VitemojiMatchBy {
   shortcodes?: boolean;
@@ -10,7 +42,7 @@ export interface VitemojiMatchBy {
 
 export interface VitemojiOptions {
   include?: RegExp;
-  locale?: string;
+  locales?: VitemojiLocale[];
   preset?: VitemojiPreset;
   shortcodePreset?: VitemojiShortcodePreset;
   matchBy?: VitemojiMatchBy;
@@ -18,13 +50,13 @@ export interface VitemojiOptions {
 
 export interface ResolvedVitemojiOptions {
   include: RegExp;
-  locale: string;
+  locales: VitemojiLocale[];
   matchBy: Required<VitemojiMatchBy>;
   shortcodePreset: VitemojiShortcodePreset;
 }
 
 const DEFAULT_INCLUDE = /\.[jt]sx$/;
-const DEFAULT_LOCALE = "en";
+const DEFAULT_LOCALES: VitemojiLocale[] = ["en"];
 const DEFAULT_SHORTCODE_PRESET: VitemojiShortcodePreset = "github";
 
 const DEFAULT_MATCH_BY: Required<VitemojiMatchBy> = {
@@ -58,11 +90,18 @@ export function resolveVitemojiOptions(
 
   return {
     include: options.include ?? DEFAULT_INCLUDE,
-    locale: options.locale ?? DEFAULT_LOCALE,
+    locales: resolveLocales(options),
     matchBy: {
       ...baseMatchBy,
       ...options.matchBy,
     },
     shortcodePreset: options.shortcodePreset ?? DEFAULT_SHORTCODE_PRESET,
   };
+}
+
+function resolveLocales(options: VitemojiOptions): VitemojiLocale[] {
+  const locales = options.locales ?? DEFAULT_LOCALES;
+  const normalizedLocales = Array.from(new Set(locales));
+
+  return normalizedLocales.length > 0 ? normalizedLocales : DEFAULT_LOCALES;
 }
