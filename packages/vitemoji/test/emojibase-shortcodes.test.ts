@@ -10,9 +10,12 @@ import type {
 
 const validShortcodeLocaleCases = [
   [["bn"], ["cldr"]],
+  [["ko"], ["cldr-native"]],
   [["bn"], ["emojibase", "cldr"]],
+  [["ja"], ["emojibase-native"]],
   [["en", "fr", "zh"], ["emojibase"]],
   [["en", "fr", "zh"], ["github", "cldr"]],
+  [["en"], ["discord", "slack"]],
 ] satisfies readonly [
   readonly VitemojiLocale[],
   readonly VitemojiShortcodePreset[],
@@ -93,5 +96,46 @@ describe("Emojibase shortcode support", () => {
     );
 
     expect(matcher.rewriteText(":aagun:")).toBe("🔥");
+  });
+
+  it("supports native shortcodes for native presets", () => {
+    const entries = loadEmojibaseEntries(["ko"], ["cldr-native"]);
+    const matcher = createEmojiMatcher(
+      createEmojiMatchMaps(entries, {
+        shortcodes: true,
+        names: false,
+        keywords: false,
+        hexcodes: false,
+      }),
+    );
+
+    expect(matcher.rewriteText(":미소_짓는_눈으로_웃는_얼굴:")).toBe("😁");
+  });
+
+  it("supports discord as an alias of joypixels", () => {
+    const entries = loadEmojibaseEntries(["en"], ["discord"]);
+    const matcher = createEmojiMatcher(
+      createEmojiMatchMaps(entries, {
+        shortcodes: true,
+        names: false,
+        keywords: false,
+        hexcodes: false,
+      }),
+    );
+
+    expect(matcher.rewriteText(":flame:")).toBe("🔥");
+  });
+
+  it("supports slack as an alias of iamcal", () => {
+    const slackEntries = loadEmojibaseEntries(["en"], ["slack"]);
+    const discordEntries = loadEmojibaseEntries(["en"], ["discord"]);
+    const slackThumbsUp = slackEntries.find((entry) => entry.hexcodes.includes("1F44D"));
+    const discordThumbsUp = discordEntries.find((entry) => entry.hexcodes.includes("1F44D"));
+
+    expect(slackThumbsUp?.shortcodes).toEqual(
+      expect.arrayContaining([":+1:", ":thumbsup:"]),
+    );
+    expect(slackThumbsUp?.shortcodes).not.toContain(":thumbs_up:");
+    expect(discordThumbsUp?.shortcodes).toContain(":thumbs_up:");
   });
 });

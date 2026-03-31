@@ -3,6 +3,7 @@ import { createRequire } from "node:module";
 import type { VitemojiLocale, VitemojiShortcodePreset } from "../options.js";
 import {
   hasShortcodeDataset,
+  resolveShortcodePresets,
   validateShortcodePresetLocales,
 } from "./emojibase-shortcodes.js";
 
@@ -31,7 +32,8 @@ export function loadEmojibaseEntries(
   locales: readonly VitemojiLocale[],
   shortcodePresets: readonly VitemojiShortcodePreset[],
 ): EmojiEntry[] {
-  const cacheKey = `${locales.join(",")}:${shortcodePresets.join(",")}`;
+  const resolvedShortcodePresets = resolveShortcodePresets(shortcodePresets);
+  const cacheKey = `${locales.join(",")}:${resolvedShortcodePresets.join(",")}`;
   const cachedEntries = emojiEntryCache.get(cacheKey);
 
   if (cachedEntries) {
@@ -41,7 +43,7 @@ export function loadEmojibaseEntries(
   validateShortcodePresetLocales(locales, shortcodePresets);
 
   const entries = locales.flatMap((locale) =>
-    loadLocaleEmojibaseEntries(locale, shortcodePresets),
+    loadLocaleEmojibaseEntries(locale, resolvedShortcodePresets),
   );
 
   emojiEntryCache.set(cacheKey, entries);

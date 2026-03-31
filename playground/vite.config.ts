@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [
     react(),
     vitemoji({
-      preset: "safe",
+      preset: "chaos",
       locales: [
         "en",
         "fr",
@@ -21,7 +21,7 @@ export default defineConfig({
         "es",
         "hi",
       ],
-      shortcodePresets: ["emojibase", "github", "cldr"],
+      shortcodePresets: ["emojibase", "github", "cldr", "joypixels", "discord"],
     }),
   ],
 });

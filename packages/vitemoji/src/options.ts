@@ -1,5 +1,14 @@
 export type VitemojiPreset = "safe" | "chaos";
-export type VitemojiShortcodePreset = "github" | "emojibase" | "cldr";
+export type VitemojiShortcodePreset =
+  | "cldr"
+  | "cldr-native"
+  | "discord"
+  | "emojibase"
+  | "emojibase-native"
+  | "github"
+  | "iamcal"
+  | "joypixels"
+  | "slack";
 export const VITEMOJI_LOCALES = [
   "bn",
   "da",
