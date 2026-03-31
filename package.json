@@ -1,0 +1,19 @@
+{
+  "name": "vitemoji-workspace",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "playground"
+  ],
+  "scripts": {
+    "build": "npm run build -w vitemoji && npm run build -w playground",
+    "dev": "npm run dev -w playground",
+    "typecheck": "npm run typecheck -w vitemoji && npm run typecheck -w playground"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.7.0",
+    "vite": "^5.4.21"
+  }
+}
