@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { createEmojifier } from "../src/create-emojifier.js";
+import { createEmojifier } from "../src/runtime/create-emojifier.js";
 
 describe("createEmojifier", () => {
   it("loads generated chunks and creates a reusable emojifier", async () => {

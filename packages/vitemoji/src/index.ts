@@ -1,6 +1,3 @@
-export type { Emojifier } from "./create-emojifier.js";
-export { createEmojifier } from "./create-emojifier.js";
-export { emojifyText } from "./emojify-text.js";
 export type {
   EmojifyTextOptions,
   VitemojiLocale,
@@ -11,3 +8,4 @@ export type {
 } from "./options.js";
 export { VITEMOJI_LOCALES } from "./options.js";
 export { vitemoji, vitemoji as default } from "./plugin.js";
+export { emojifyText } from "./runtime/emojify-text.js";

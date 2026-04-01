@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { emojifyText } from "../src/emojify-text.js";
+import { emojifyText } from "../src/runtime/emojify-text.js";
 
 describe("emojifyText", () => {
   it("uses shortcode matching by default", () => {

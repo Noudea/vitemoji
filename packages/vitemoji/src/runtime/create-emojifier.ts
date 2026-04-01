@@ -1,11 +1,11 @@
-import { loadGeneratedEmojiMatchMapsAsync } from "./data/generated-async.js";
-import { createEmojiMatcher, filterEmojiMatchMaps } from "./matcher.js";
+import { loadGeneratedEmojiMatchMapsAsync } from "../data/generated-async.js";
+import { createEmojiMatcher, filterEmojiMatchMaps } from "../matcher.js";
 import {
   type EmojifyTextOptions,
   resolveEmojifyTextOptions,
   type VitemojiLocale,
   type VitemojiShortcodePreset,
-} from "./options.js";
+} from "../options.js";
 
 export type Emojifier = (input: string) => string;
 

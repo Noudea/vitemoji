@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import {
-  createEmojifier,
   type EmojifyTextOptions,
-} from "../../../packages/vitemoji/src/browser.ts";
+  useEmojifier,
+} from "../../../packages/vitemoji/src/runtime/react.ts";
 
 const runtimeOptions: EmojifyTextOptions = {
   preset: "chaos",
@@ -13,41 +13,7 @@ const runtimeOptions: EmojifyTextOptions = {
 
 export default function App() {
   const [input, setInput] = useState("hello world");
-  const [ready, setReady] = useState(false);
-  const [output, setOutput] = useState(input);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    setReady(false);
-    setError(null);
-
-    createEmojifier(runtimeOptions)
-      .then((emojify) => {
-        if (cancelled) {
-          return;
-        }
-
-        setOutput(emojify(input));
-        setReady(true);
-      })
-      .catch((caughtError: unknown) => {
-        if (cancelled) {
-          return;
-        }
-
-        setError(
-          caughtError instanceof Error
-            ? caughtError.message
-            : "Unknown emojifier error",
-        );
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [input]);
+  const { ready, error, emojifyText } = useEmojifier(runtimeOptions);
 
   return (
     <main className="app-shell">
@@ -62,11 +28,11 @@ export default function App() {
       </label>
 
       <section className="panel">
-        <h2>createEmojifier()</h2>
+        <h2>useEmojifier()</h2>
         <p className="meta">
           {ready ? "Ready" : "Loading generated chunks..."}
         </p>
-        <p className="preview">{error ? error : output}</p>
+        <p className="preview">{error ? error.message : emojifyText(input)}</p>
       </section>
     </main>
   );

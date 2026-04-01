@@ -1,9 +1,9 @@
-import { loadGeneratedEmojiMatchMaps } from "./data/generated.js";
-import { createEmojiMatcher, filterEmojiMatchMaps } from "./matcher.js";
+import { loadGeneratedEmojiMatchMaps } from "../data/generated.js";
+import { createEmojiMatcher, filterEmojiMatchMaps } from "../matcher.js";
 import {
   type EmojifyTextOptions,
   resolveEmojifyTextOptions,
-} from "./options.js";
+} from "../options.js";
 
 export function emojifyText(
   input: string,
