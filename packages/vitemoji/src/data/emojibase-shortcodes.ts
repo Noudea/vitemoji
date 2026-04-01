@@ -1,12 +1,9 @@
-import { createRequire } from "node:module";
-
 import {
   VITEMOJI_LOCALES,
   type VitemojiLocale,
   type VitemojiShortcodePreset,
 } from "../options.js";
-
-const require = createRequire(import.meta.url);
+import { GENERATED_SHORTCODE_LOADERS } from "./generated-manifest.js";
 
 type ResolvedVitemojiShortcodePreset = Exclude<
   VitemojiShortcodePreset,
@@ -24,13 +21,6 @@ const supportedShortcodeLocalesCache = new Map<
   ResolvedVitemojiShortcodePreset,
   readonly VitemojiLocale[]
 >();
-
-interface GeneratedManifest {
-  locales: VitemojiLocale[];
-  shortcodePresetsByLocale: Record<string, string[]>;
-}
-
-let generatedManifestCache: GeneratedManifest | null = null;
 
 export function resolveShortcodePresets(
   shortcodePresets: readonly VitemojiShortcodePreset[],
@@ -88,12 +78,10 @@ export function hasShortcodeDataset(
   locale: VitemojiLocale,
   shortcodePreset: VitemojiShortcodePreset,
 ): boolean {
-  const manifest = getGeneratedManifest();
-
-  return (
-    manifest.shortcodePresetsByLocale[locale]?.includes(
-      resolveShortcodePreset(shortcodePreset),
-    ) ?? false
+  return Boolean(
+    GENERATED_SHORTCODE_LOADERS[locale]?.[
+      resolveShortcodePreset(shortcodePreset)
+    ],
   );
 }
 
@@ -113,26 +101,6 @@ function getSupportedShortcodePresetLocales(
   supportedShortcodeLocalesCache.set(shortcodePreset, supportedLocales);
 
   return supportedLocales;
-}
-
-function getGeneratedManifest(): GeneratedManifest {
-  if (generatedManifestCache) {
-    return generatedManifestCache;
-  }
-
-  try {
-    generatedManifestCache =
-      require("../../generated/manifest.json") as GeneratedManifest;
-  } catch (error) {
-    throw new Error(
-      "[vitemoji] Missing generated emoji manifest. Run `pnpm generate:data` or `pnpm build` from the workspace root first.",
-      {
-        cause: error,
-      },
-    );
-  }
-
-  return generatedManifestCache;
 }
 
 function resolveShortcodePreset(

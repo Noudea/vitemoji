@@ -4,16 +4,17 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "build": "pnpm --filter vitemoji build && pnpm --filter playground build",
+    "build": "pnpm --filter vitemoji build && pnpm --filter playground build && pnpm --filter runtime-playground build",
     "docs:build": "pnpm --filter docs build",
     "docs:dev": "pnpm --filter docs dev",
     "dev": "pnpm generate:data && pnpm --filter playground dev",
+    "dev:runtime": "pnpm generate:data && pnpm --filter runtime-playground dev",
     "format": "pnpm exec biome format . --write",
     "generate:data": "pnpm --filter vitemoji generate:data",
     "lint": "pnpm exec biome check .",
     "lint:fix": "pnpm exec biome check . --write",
     "test": "pnpm --filter vitemoji test",
-    "typecheck": "pnpm --filter vitemoji typecheck && pnpm --filter playground typecheck"
+    "typecheck": "pnpm --filter vitemoji typecheck && pnpm --filter playground typecheck && pnpm --filter runtime-playground typecheck"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.9",

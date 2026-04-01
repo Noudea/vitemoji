@@ -2,4 +2,6 @@ node_modules/
 dist/
 .vite/
 packages/vitemoji/generated/
+packages/vitemoji/src/data/generated-manifest.ts
+packages/vitemoji/src/generated/
 .DS_Store
