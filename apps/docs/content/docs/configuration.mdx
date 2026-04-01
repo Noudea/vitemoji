@@ -36,6 +36,16 @@ For plain strings, `vitemoji` also exports:
 type EmojifyTextOptions = Omit<VitemojiOptions, "include">;
 ```
 
+For React runtime usage, `vitemoji/react` exports:
+
+```ts
+type UseEmojifierResult = {
+  isReady: boolean;
+  error: Error | null;
+  emojifyText: (input: string) => string;
+};
+```
+
 ## `include`
 
 Controls which files are transformed.

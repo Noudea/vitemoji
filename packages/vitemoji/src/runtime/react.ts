@@ -14,7 +14,7 @@ import { createEmojifier, type Emojifier } from "./create-emojifier.js";
 const passthroughEmojifier: Emojifier = (input) => input;
 
 export interface UseEmojifierResult {
-  ready: boolean;
+  isReady: boolean;
   error: Error | null;
   emojifyText: Emojifier;
 }
@@ -23,7 +23,7 @@ export function useEmojifier(
   options: EmojifyTextOptions = {},
 ): UseEmojifierResult {
   const resolvedOptionsKey = JSON.stringify(resolveEmojifyTextOptions(options));
-  const [ready, setReady] = useState(false);
+  const [isReady, setIsReady] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [emojifyText, setEmojifyText] = useState<Emojifier>(
     () => passthroughEmojifier,
@@ -35,7 +35,7 @@ export function useEmojifier(
       resolvedOptionsKey,
     ) as ResolvedEmojifyTextOptions;
 
-    setReady(false);
+    setIsReady(false);
     setError(null);
     setEmojifyText(() => passthroughEmojifier);
 
@@ -46,7 +46,7 @@ export function useEmojifier(
         }
 
         setEmojifyText(() => nextEmojifier);
-        setReady(true);
+        setIsReady(true);
       })
       .catch((caughtError: unknown) => {
         if (cancelled) {
@@ -66,7 +66,7 @@ export function useEmojifier(
   }, [resolvedOptionsKey]);
 
   return {
-    ready,
+    isReady,
     error,
     emojifyText,
   };

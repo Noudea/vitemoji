@@ -1,6 +1,6 @@
 # vitemoji
 
-`vitemoji` is a Vite plugin and text utility that rewrites UI text into emoji.
+`vitemoji` is a Vite plugin plus runtime helpers for turning UI text into emoji.
 
 It is designed for React-style JSX and TSX files. The plugin parses your source,
 finds text rendered in JSX, and replaces matching tokens with emoji using
@@ -56,7 +56,7 @@ export function App() {
 
 ## `emojifyText()`
 
-`vitemoji` also exports a framework-agnostic text utility:
+`vitemoji` also exports a synchronous text utility:
 
 ```ts
 import { emojifyText } from "vitemoji";
@@ -70,6 +70,15 @@ Default `emojifyText()` behavior:
 - `locales: ["en"]`
 - `shortcodePresets: ["cldr"]`
 - shortcode-only matching
+
+Use `emojifyText()` for:
+
+- Node or server-side usage
+- simple synchronous string conversion
+- tests, scripts, and tooling
+
+If you are in a React app and want runtime locale or shortcode preset loading,
+prefer `useEmojifier()` from `vitemoji/react` instead.
 
 Example with broader matching:
 
@@ -113,6 +122,41 @@ type EmojifyTextOptions = {
 
 If none of the requested shortcode presets support the requested locales,
 `emojifyText()` throws a descriptive error instead of silently falling back.
+
+## React runtime
+
+For React runtime usage, `vitemoji` exposes a dedicated hook:
+
+```ts
+import { useEmojifier } from "vitemoji/react";
+```
+
+Example:
+
+```tsx
+import { useState } from "react";
+import { useEmojifier } from "vitemoji/react";
+
+export function EmojiPreview() {
+  const [value, setValue] = useState("hello world");
+  const { isReady, error, emojifyText } = useEmojifier({
+    preset: "chaos",
+    locales: ["en", "fr"],
+    shortcodePresets: ["cldr", "emojibase"],
+  });
+
+  return (
+    <>
+      <input value={value} onChange={(event) => setValue(event.target.value)} />
+      <p>{error ? error.message : emojifyText(value)}</p>
+      <small>{isReady ? "Ready" : "Loading emoji data..."}</small>
+    </>
+  );
+}
+```
+
+`useEmojifier()` is the recommended browser/runtime API when you want full locale
+and shortcode preset control in React.
 
 ## What The Plugin Rewrites
 

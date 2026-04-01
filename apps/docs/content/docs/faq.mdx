@@ -13,6 +13,22 @@ No. `vitemoji` only rewrites text that is rendered in JSX:
 
 It does not rewrite ordinary strings elsewhere in your code.
 
+## Should I use `emojifyText()` or `useEmojifier()`?
+
+Use `emojifyText()` when you want a synchronous helper for:
+
+- Node or server-side code
+- scripts and tooling
+- simple string conversion without runtime loading
+
+Use `useEmojifier()` in React apps when you want:
+
+- browser/runtime usage
+- locale-aware loading in the client
+- full locale and shortcode preset control
+
+`useEmojifier()` is the recommended React runtime API.
+
 ## Does it transform JavaScript files?
 
 Only files that match the `include` pattern are transformed. The default pattern
@@ -41,8 +57,29 @@ These rules apply:
 - the longest phrase wins within a match category
 - category priority is shortcodes, hexcodes, names, then keywords
 
+## Why does `useEmojifier()` load asynchronously?
+
+Runtime React usage loads generated locale and shortcode chunks on demand.
+
+That keeps the initial browser bundle smaller than loading every locale and every
+shortcode dataset up front. The hook returns `isReady` so your app can show a
+loading state while those chunks are being fetched.
+
 ## Can I mix locales and shortcode presets?
 
 Yes, but your selected shortcode presets must support the locales you request. If
 none of the requested presets support one of your locales, the plugin throws a
 setup error so the mismatch is visible immediately.
+
+## Why do locale and shortcode preset combinations sometimes throw?
+
+`vitemoji` validates that each requested locale is supported by at least one of
+your requested shortcode presets.
+
+For example:
+
+- `locales: ["bn"]` with `shortcodePresets: ["github"]` throws
+- `locales: ["bn"]` with `shortcodePresets: ["cldr"]` works
+
+This is intentional. The package fails fast instead of silently falling back to a
+different shortcode dataset.

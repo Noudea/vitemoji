@@ -13,7 +13,7 @@ const runtimeOptions: EmojifyTextOptions = {
 
 export default function App() {
   const [input, setInput] = useState("hello world");
-  const { ready, error, emojifyText } = useEmojifier(runtimeOptions);
+  const { isReady, error, emojifyText } = useEmojifier(runtimeOptions);
 
   return (
     <main className="app-shell">
@@ -30,7 +30,7 @@ export default function App() {
       <section className="panel">
         <h2>useEmojifier()</h2>
         <p className="meta">
-          {ready ? "Ready" : "Loading generated chunks..."}
+          {isReady ? "Ready" : "Loading generated chunks..."}
         </p>
         <p className="preview">{error ? error.message : emojifyText(input)}</p>
       </section>

@@ -78,6 +78,45 @@ emojifyText(":fire:");
 // "🔥"
 ```
 
+This is best for:
+
+- Node or server-side usage
+- tooling and scripts
+- simple synchronous string conversion
+
+If you are in a React app and want runtime locale or shortcode preset loading,
+prefer `useEmojifier()` instead.
+
+## React runtime hook
+
+For browser/runtime usage in React, prefer `useEmojifier()`:
+
+```ts
+import { useEmojifier } from "vitemoji/react";
+```
+
+```tsx
+import { useState } from "react";
+import { useEmojifier } from "vitemoji/react";
+
+export function EmojiPreview() {
+  const [value, setValue] = useState("hello world");
+  const { isReady, error, emojifyText } = useEmojifier({
+    preset: "chaos",
+    locales: ["en", "fr"],
+    shortcodePresets: ["cldr", "emojibase"],
+  });
+
+  return (
+    <>
+      <input value={value} onChange={(event) => setValue(event.target.value)} />
+      <p>{error ? error.message : emojifyText(value)}</p>
+      <small>{isReady ? "Ready" : "Loading emoji data..."}</small>
+    </>
+  );
+}
+```
+
 ## Peer dependency
 
 `vitemoji` declares a Vite peer dependency compatible with:

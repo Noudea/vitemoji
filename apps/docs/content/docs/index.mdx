@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: Install and use vitemoji as a Vite plugin or plain text utility.
+description: Install and use vitemoji as a Vite plugin, sync text helper, or React runtime hook.
 ---
 
-`vitemoji` is a Vite plugin and text utility that rewrites UI text into emoji.
+`vitemoji` is a Vite plugin plus runtime helpers for turning UI text into emoji.
 
 It parses `.jsx` and `.tsx` modules, finds text rendered in JSX, and replaces
 matching values using `emojibase-data`.
@@ -83,6 +83,15 @@ import { emojifyText } from "vitemoji";
 
 emojifyText(":fire:");
 // "🔥"
+```
+
+This sync helper is best for server-side code, scripts, and simple string
+conversion. For React/browser runtime usage, prefer `useEmojifier()`.
+
+And for React runtime usage:
+
+```ts
+import { useEmojifier } from "vitemoji/react";
 ```
 
 <Cards>

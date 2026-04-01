@@ -13,7 +13,7 @@ vi.mock("../src/runtime/create-emojifier.js", () => ({
 }));
 
 interface ProbeSnapshot {
-  ready: boolean;
+  isReady: boolean;
   error: Error | null;
   output: string;
 }
@@ -36,10 +36,10 @@ beforeEach(() => {
 });
 
 function HookProbe({ input, onSnapshot, options }: HookProbeProps) {
-  const { ready, error, emojifyText } = useEmojifier(options);
+  const { isReady, error, emojifyText } = useEmojifier(options);
 
   onSnapshot({
-    ready,
+    isReady,
     error,
     output: emojifyText(input),
   });
@@ -87,13 +87,13 @@ describe("useEmojifier", () => {
     });
 
     expect(snapshots[0]).toEqual({
-      ready: false,
+      isReady: false,
       error: null,
       output: "hello world",
     });
-    await waitForSnapshot(() => snapshots.at(-1)?.ready === true);
+    await waitForSnapshot(() => snapshots.at(-1)?.isReady === true);
     expect(snapshots.at(-1)).toEqual({
-      ready: true,
+      isReady: true,
       error: null,
       output: "👋 🌍️",
     });
@@ -129,7 +129,7 @@ describe("useEmojifier", () => {
     await waitForSnapshot(() => snapshots.at(-1)?.error !== null);
     const latestSnapshot = snapshots.at(-1);
 
-    expect(latestSnapshot?.ready).toBe(false);
+    expect(latestSnapshot?.isReady).toBe(false);
     expect(latestSnapshot?.output).toBe(":fire:");
     expect(latestSnapshot?.error?.message).toBe("Failed to load emojifier");
   });

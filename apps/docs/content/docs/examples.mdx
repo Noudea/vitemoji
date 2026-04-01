@@ -134,3 +134,33 @@ emojifyText("hello world", {
 
 // "👋 🌍️"
 ```
+
+This is the sync helper. For React/browser runtime usage, prefer
+`useEmojifier()`.
+
+## React runtime hook
+
+`useEmojifier()` gives React apps the same matching behavior with async runtime
+loading:
+
+```tsx
+import { useState } from "react";
+import { useEmojifier } from "vitemoji/react";
+
+export function EmojiPreview() {
+  const [value, setValue] = useState("hello world");
+  const { isReady, error, emojifyText } = useEmojifier({
+    preset: "chaos",
+    locales: ["en", "fr"],
+    shortcodePresets: ["cldr", "emojibase"],
+  });
+
+  return (
+    <>
+      <input value={value} onChange={(event) => setValue(event.target.value)} />
+      <p>{error ? error.message : emojifyText(value)}</p>
+      <small>{isReady ? "Ready" : "Loading emoji data..."}</small>
+    </>
+  );
+}
+```
