@@ -19,9 +19,9 @@ export default defineConfig({
         "bn",
         "da",
         "es",
-        "hi"
+        "hi",
       ],
-      shortcodePresets: ["emojibase", "github", "cldr", "joypixels", "discord"]
-    })
-  ]
+      shortcodePresets: ["emojibase", "github", "cldr", "joypixels", "discord"],
+    }),
+  ],
 });
