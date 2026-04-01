@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import type { EmojiEntry } from "../src/data/emojibase.js";
-import { createEmojiMatchMaps, createEmojiMatcher } from "../src/matcher.js";
+import { createEmojiMatcher, createEmojiMatchMaps } from "../src/matcher.js";
 
 function createMatcher(
   emojiEntries: EmojiEntry[],
@@ -25,8 +25,20 @@ function createMatcher(
 describe("createEmojiMatcher", () => {
   const boundaryMatcher = createMatcher(
     [
-      { emoji: "🍬", shortcodes: [], names: ["bon"], keywords: [], hexcodes: [] },
-      { emoji: "🔥", shortcodes: [], names: ["fire"], keywords: [], hexcodes: [] },
+      {
+        emoji: "🍬",
+        shortcodes: [],
+        names: ["bon"],
+        keywords: [],
+        hexcodes: [],
+      },
+      {
+        emoji: "🔥",
+        shortcodes: [],
+        names: ["fire"],
+        keywords: [],
+        hexcodes: [],
+      },
     ],
     { names: true },
   );
@@ -34,8 +46,20 @@ describe("createEmojiMatcher", () => {
   it("prefers the longest phrase match within a category", () => {
     const matcher = createMatcher(
       [
-        { emoji: "😡", shortcodes: [], names: ["angry"], keywords: [], hexcodes: [] },
-        { emoji: "🙂", shortcodes: [], names: ["face"], keywords: [], hexcodes: [] },
+        {
+          emoji: "😡",
+          shortcodes: [],
+          names: ["angry"],
+          keywords: [],
+          hexcodes: [],
+        },
+        {
+          emoji: "🙂",
+          shortcodes: [],
+          names: ["face"],
+          keywords: [],
+          hexcodes: [],
+        },
         {
           emoji: "🤬",
           shortcodes: [],
@@ -69,7 +93,13 @@ describe("createEmojiMatcher", () => {
           keywords: ["fire"],
           hexcodes: [],
         },
-        { emoji: "🔥", shortcodes: [], names: ["fire"], keywords: [], hexcodes: [] },
+        {
+          emoji: "🔥",
+          shortcodes: [],
+          names: ["fire"],
+          keywords: [],
+          hexcodes: [],
+        },
       ],
       { names: true, keywords: true },
     );
@@ -85,7 +115,13 @@ describe("createEmojiMatcher", () => {
   ])("matches hexcodes in %s", (input, expected) => {
     const matcher = createMatcher(
       [
-        { emoji: "🔥", shortcodes: [], names: ["fire"], keywords: [], hexcodes: ["1F525"] },
+        {
+          emoji: "🔥",
+          shortcodes: [],
+          names: ["fire"],
+          keywords: [],
+          hexcodes: ["1F525"],
+        },
       ],
       { hexcodes: true, names: true },
     );
@@ -97,17 +133,20 @@ describe("createEmojiMatcher", () => {
     [":fire:", "🔥"],
     ["(:fire:)", "(🔥)"],
     ["foo:fire:bar", "foo🔥bar"],
-  ])(
-    "matches shortcode tokens in %s",
-    (input, expected) => {
-      const matcher = createMatcher(
-        [
-          { emoji: "🔥", shortcodes: [":fire:"], names: [], keywords: [], hexcodes: [] },
-        ],
-        { shortcodes: true },
-      );
+  ])("matches shortcode tokens in %s", (input, expected) => {
+    const matcher = createMatcher(
+      [
+        {
+          emoji: "🔥",
+          shortcodes: [":fire:"],
+          names: [],
+          keywords: [],
+          hexcodes: [],
+        },
+      ],
+      { shortcodes: true },
+    );
 
-      expect(matcher.rewriteText(input)).toBe(expected);
-    },
-  );
+    expect(matcher.rewriteText(input)).toBe(expected);
+  });
 });

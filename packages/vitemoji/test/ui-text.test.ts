@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import type { EmojiEntry } from "../src/data/emojibase.js";
-import { createEmojiMatchMaps, createEmojiMatcher } from "../src/matcher.js";
+import { createEmojiMatcher, createEmojiMatchMaps } from "../src/matcher.js";
 import { transformUiText } from "../src/transforms/ui-text.js";
 
 const nameEmojiEntries: EmojiEntry[] = [
@@ -29,7 +29,13 @@ const nameEmojiMatcher = createEmojiMatcher(
 const shortcodeEmojiMatcher = createEmojiMatcher(
   createEmojiMatchMaps(
     [
-      { emoji: "🔥", shortcodes: [":fire:"], names: [], keywords: [], hexcodes: [] },
+      {
+        emoji: "🔥",
+        shortcodes: [":fire:"],
+        names: [],
+        keywords: [],
+        hexcodes: [],
+      },
     ],
     {
       shortcodes: true,
@@ -43,7 +49,13 @@ const shortcodeEmojiMatcher = createEmojiMatcher(
 const hexcodeEmojiMatcher = createEmojiMatcher(
   createEmojiMatchMaps(
     [
-      { emoji: "🔥", shortcodes: [], names: [], keywords: [], hexcodes: ["1F525"] },
+      {
+        emoji: "🔥",
+        shortcodes: [],
+        names: [],
+        keywords: [],
+        hexcodes: ["1F525"],
+      },
     ],
     {
       shortcodes: false,
@@ -76,7 +88,7 @@ describe("transformUiText", () => {
     expect(result.code).toContain("<h1>👋 🌍</h1>");
     expect(result.code).toContain("<h2>❤️‍🔥</h2>");
     expect(result.code).toContain('{"👋 🌍"}');
-    expect(result.code).toContain('`😀 ${name}`');
+    expect(result.code).toContain(`\`😀 \${name}\``);
   });
 
   it("returns the original code when nothing changes", () => {

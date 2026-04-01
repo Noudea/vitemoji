@@ -1,7 +1,7 @@
 import type { Plugin } from "vite";
 
 import { loadEmojibaseEntries } from "./data/emojibase.js";
-import { createEmojiMatchMaps, createEmojiMatcher } from "./matcher.js";
+import { createEmojiMatcher, createEmojiMatchMaps } from "./matcher.js";
 import { resolveVitemojiOptions, type VitemojiOptions } from "./options.js";
 import { transformUiText } from "./transforms/ui-text.js";
 

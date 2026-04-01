@@ -8,8 +8,8 @@
     "start": "next start",
     "types:check": "fumadocs-mdx && next typegen && tsc --noEmit",
     "postinstall": "fumadocs-mdx",
-    "lint": "biome check",
-    "format": "biome format --write"
+    "lint": "pnpm --dir ../.. exec biome check apps/docs",
+    "format": "pnpm --dir ../.. exec biome format --write apps/docs"
   },
   "dependencies": {
     "fumadocs-core": "16.7.9",
@@ -29,7 +29,6 @@
     "@types/react-dom": "^19.2.3",
     "postcss": "^8.5.8",
     "tailwindcss": "^4.2.2",
-    "typescript": "^6.0.2",
-    "@biomejs/biome": "^2.4.9"
+    "typescript": "^6.0.2"
   }
 }

@@ -1,23 +1,23 @@
-import { RootProvider } from 'fumadocs-ui/provider/next';
-import './global.css';
-import { Inter } from 'next/font/google';
-import type { Metadata } from 'next';
+import { RootProvider } from "fumadocs-ui/provider/next";
+import "./global.css";
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 
 const inter = Inter({
-  subsets: ['latin'],
+  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
   title: {
-    default: 'vitemoji Docs',
-    template: '%s | vitemoji Docs',
+    default: "vitemoji Docs",
+    template: "%s | vitemoji Docs",
   },
   description:
-    'Install and configure the vitemoji Vite plugin to rewrite JSX UI text into emoji.',
-  metadataBase: new URL('https://noudea.github.io/vitemoji'),
+    "Install and configure the vitemoji Vite plugin to rewrite JSX UI text into emoji.",
+  metadataBase: new URL("https://noudea.github.io/vitemoji"),
 };
 
-export default function Layout({ children }: LayoutProps<'/'>) {
+export default function Layout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={inter.className} suppressHydrationWarning>
       <body className="flex flex-col min-h-screen">

@@ -8,10 +8,14 @@
     "docs:build": "pnpm --filter docs build",
     "docs:dev": "pnpm --filter docs dev",
     "dev": "pnpm --filter playground dev",
+    "format": "pnpm exec biome format . --write",
+    "lint": "pnpm exec biome check .",
+    "lint:fix": "pnpm exec biome check . --write",
     "test": "pnpm --filter vitemoji test",
     "typecheck": "pnpm --filter vitemoji typecheck && pnpm --filter playground typecheck"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.4.9",
     "@vitejs/plugin-react": "^4.7.0",
     "vite": "^5.4.21"
   }

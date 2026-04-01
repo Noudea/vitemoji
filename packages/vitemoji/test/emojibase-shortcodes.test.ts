@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { loadEmojibaseEntries } from "../src/data/emojibase.js";
 import { validateShortcodePresetLocales } from "../src/data/emojibase-shortcodes.js";
-import { createEmojiMatchMaps, createEmojiMatcher } from "../src/matcher.js";
+import { createEmojiMatcher, createEmojiMatchMaps } from "../src/matcher.js";
 import type {
   VitemojiLocale,
   VitemojiShortcodePreset,
@@ -14,7 +14,10 @@ const validShortcodeLocaleCases = [
   [["bn"], ["emojibase", "cldr"]],
   [["ja"], ["emojibase-native"]],
   [["en", "fr", "zh"], ["emojibase"]],
-  [["en", "fr", "zh"], ["github", "cldr"]],
+  [
+    ["en", "fr", "zh"],
+    ["github", "cldr"],
+  ],
   [["en"], ["discord", "slack"]],
 ] satisfies readonly [
   readonly VitemojiLocale[],
@@ -22,8 +25,16 @@ const validShortcodeLocaleCases = [
 ][];
 
 const invalidShortcodeLocaleCases = [
-  [["bn"], ["github"], /None of the requested shortcode presets support locales: bn/],
-  [["bn", "da"], ["emojibase", "github"], /None of the requested shortcode presets support locales: bn, da/],
+  [
+    ["bn"],
+    ["github"],
+    /None of the requested shortcode presets support locales: bn/,
+  ],
+  [
+    ["bn", "da"],
+    ["emojibase", "github"],
+    /None of the requested shortcode presets support locales: bn, da/,
+  ],
 ] satisfies readonly [
   readonly VitemojiLocale[],
   readonly VitemojiShortcodePreset[],
@@ -38,51 +49,50 @@ const localizedNameCases = [
 ] satisfies readonly [readonly VitemojiLocale[], string, string][];
 
 describe("Emojibase shortcode support", () => {
-  it.each(validShortcodeLocaleCases)(
-    "accepts locales %j with shortcode presets %j",
-    (locales, shortcodePresets) => {
-      expect(() =>
-        validateShortcodePresetLocales(locales, shortcodePresets),
-      ).not.toThrow();
-    },
-  );
+  it.each(
+    validShortcodeLocaleCases,
+  )("accepts locales %j with shortcode presets %j", (locales, shortcodePresets) => {
+    expect(() =>
+      validateShortcodePresetLocales(locales, shortcodePresets),
+    ).not.toThrow();
+  });
 
-  it.each(invalidShortcodeLocaleCases)(
-    "rejects locales %j with shortcode presets %j",
-    (locales, shortcodePresets, message) => {
-      expect(() =>
-        validateShortcodePresetLocales(locales, shortcodePresets),
-      ).toThrowError(message);
-    },
-  );
+  it.each(
+    invalidShortcodeLocaleCases,
+  )("rejects locales %j with shortcode presets %j", (locales, shortcodePresets, message) => {
+    expect(() =>
+      validateShortcodePresetLocales(locales, shortcodePresets),
+    ).toThrowError(message);
+  });
 
   it("merges shortcode presets in order", () => {
     const entries = loadEmojibaseEntries(["en"], ["github", "emojibase"]);
     const sun = entries.find((entry) => entry.hexcodes.includes("2600"));
     const thumbsUp = entries.find((entry) => entry.hexcodes.includes("1F44D"));
 
-    expect(sun?.shortcodes).toEqual(expect.arrayContaining([":sunny:", ":sun:"]));
+    expect(sun?.shortcodes).toEqual(
+      expect.arrayContaining([":sunny:", ":sun:"]),
+    );
     expect(thumbsUp?.shortcodes).toEqual(
       expect.arrayContaining([":+1:", ":thumbsup:", ":yes:"]),
     );
   });
 
-  it.each(localizedNameCases)(
-    "loads localized names for locales %j",
-    (locales, input, expected) => {
-      const entries = loadEmojibaseEntries(locales, ["cldr"]);
-      const matcher = createEmojiMatcher(
-        createEmojiMatchMaps(entries, {
-          shortcodes: false,
-          names: true,
-          keywords: false,
-          hexcodes: false,
-        }),
-      );
+  it.each(
+    localizedNameCases,
+  )("loads localized names for locales %j", (locales, input, expected) => {
+    const entries = loadEmojibaseEntries(locales, ["cldr"]);
+    const matcher = createEmojiMatcher(
+      createEmojiMatchMaps(entries, {
+        shortcodes: false,
+        names: true,
+        keywords: false,
+        hexcodes: false,
+      }),
+    );
 
-      expect(matcher.rewriteText(input)).toBe(expected);
-    },
-  );
+    expect(matcher.rewriteText(input)).toBe(expected);
+  });
 
   it("supports localized shortcodes when a locale-specific preset exists", () => {
     const entries = loadEmojibaseEntries(["bn"], ["cldr"]);
@@ -129,8 +139,12 @@ describe("Emojibase shortcode support", () => {
   it("supports slack as an alias of iamcal", () => {
     const slackEntries = loadEmojibaseEntries(["en"], ["slack"]);
     const discordEntries = loadEmojibaseEntries(["en"], ["discord"]);
-    const slackThumbsUp = slackEntries.find((entry) => entry.hexcodes.includes("1F44D"));
-    const discordThumbsUp = discordEntries.find((entry) => entry.hexcodes.includes("1F44D"));
+    const slackThumbsUp = slackEntries.find((entry) =>
+      entry.hexcodes.includes("1F44D"),
+    );
+    const discordThumbsUp = discordEntries.find((entry) =>
+      entry.hexcodes.includes("1F44D"),
+    );
 
     expect(slackThumbsUp?.shortcodes).toEqual(
       expect.arrayContaining([":+1:", ":thumbsup:"]),

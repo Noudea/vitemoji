@@ -30,7 +30,6 @@ interface EmojiMatch {
 }
 
 const TOKEN_CHAR_PATTERN = /[\p{L}\p{N}]/u;
-const TOKEN_CHAR_CLASS = String.raw`[\p{L}\p{N}]`;
 
 export function createEmojiMatchMaps(
   emojiEntries: EmojiEntry[],

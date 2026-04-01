@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import Link from "next/link";
 
 export default function HomePage() {
   return (
@@ -10,9 +10,10 @@ export default function HomePage() {
         Rewrite JSX UI text into emoji.
       </h1>
       <p className="mt-6 max-w-2xl text-lg leading-8 text-fd-muted-foreground">
-        vitemoji is a Vite plugin for JSX and TSX apps. Install it from npm, add it to
-        your Vite config, and turn matching UI text like <code>:fire:</code> or{' '}
-        <code>hello world</code> into emoji at build time.
+        vitemoji is a Vite plugin for JSX and TSX apps. Install it from npm, add
+        it to your Vite config, and turn matching UI text like{" "}
+        <code>:fire:</code> or <code>hello world</code> into emoji at build
+        time.
       </p>
       <div className="mt-10 flex flex-wrap gap-4">
         <Link

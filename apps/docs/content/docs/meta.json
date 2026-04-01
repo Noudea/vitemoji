@@ -1,10 +1,4 @@
 {
   "title": "vitemoji",
-  "pages": [
-    "index",
-    "installation",
-    "configuration",
-    "examples",
-    "faq"
-  ]
+  "pages": ["index", "installation", "configuration", "examples", "faq"]
 }
