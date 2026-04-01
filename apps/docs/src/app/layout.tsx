@@ -1,10 +1,21 @@
 import { RootProvider } from 'fumadocs-ui/provider/next';
 import './global.css';
 import { Inter } from 'next/font/google';
+import type { Metadata } from 'next';
 
 const inter = Inter({
   subsets: ['latin'],
 });
+
+export const metadata: Metadata = {
+  title: {
+    default: 'vitemoji Docs',
+    template: '%s | vitemoji Docs',
+  },
+  description:
+    'Install and configure the vitemoji Vite plugin to rewrite JSX UI text into emoji.',
+  metadataBase: new URL('https://noudea.github.io/vitemoji'),
+};
 
 export default function Layout({ children }: LayoutProps<'/'>) {
   return (

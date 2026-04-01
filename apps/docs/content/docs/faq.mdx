@@ -1,0 +1,48 @@
+---
+title: FAQ
+description: Common questions about what vitemoji transforms and how matching works.
+---
+
+## Does it rewrite plain strings everywhere?
+
+No. `vitemoji` only rewrites text that is rendered in JSX:
+
+- JSX text nodes
+- string literals inside JSX expression containers
+- template literal text inside JSX expression containers
+
+It does not rewrite ordinary strings elsewhere in your code.
+
+## Does it transform JavaScript files?
+
+Only files that match the `include` pattern are transformed. The default pattern
+is:
+
+```ts
+/\.[jt]sx$/
+```
+
+That means the default setup targets `.jsx` and `.tsx` files.
+
+## Does it touch dependencies?
+
+No. Files inside `node_modules` are skipped.
+
+## What happens if a file cannot be parsed?
+
+The plugin returns the original source unchanged.
+
+## How are conflicts resolved?
+
+These rules apply:
+
+- the first matching shortcode claim wins when multiple shortcode datasets define
+  the same token
+- the longest phrase wins within a match category
+- category priority is shortcodes, hexcodes, names, then keywords
+
+## Can I mix locales and shortcode presets?
+
+Yes, but your selected shortcode presets must support the locales you request. If
+none of the requested presets support one of your locales, the plugin throws a
+setup error so the mismatch is visible immediately.

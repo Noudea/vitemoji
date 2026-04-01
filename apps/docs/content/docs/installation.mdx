@@ -1,0 +1,76 @@
+---
+title: Installation
+description: Add vitemoji to a Vite project and enable the plugin.
+---
+
+## 1. Install the package
+
+```bash
+pnpm add vitemoji
+```
+
+`vitemoji` is published on npm under the package name `vitemoji`.
+
+## 2. Add the plugin to Vite
+
+```ts
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
+import { vitemoji } from "vitemoji";
+
+export default defineConfig({
+  plugins: [
+    react(),
+    vitemoji(),
+  ],
+});
+```
+
+This is enough to enable the default behavior:
+
+- transform `.jsx` and `.tsx` files
+- skip `node_modules`
+- load the `en` locale
+- use the `github` shortcode preset
+- match shortcodes only
+
+## 3. Write JSX UI text
+
+```tsx
+export function App() {
+  return (
+    <main>
+      <h1>:fire:</h1>
+      <p>{"hello world"}</p>
+    </main>
+  );
+}
+```
+
+With the default config, `:fire:` is rewritten because shortcodes are enabled by
+default.
+
+## React example
+
+```bash
+pnpm add react react-dom
+pnpm add -D vite @vitejs/plugin-react
+```
+
+```ts
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
+import { vitemoji } from "vitemoji";
+
+export default defineConfig({
+  plugins: [react(), vitemoji()],
+});
+```
+
+## Peer dependency
+
+`vitemoji` declares a Vite peer dependency compatible with:
+
+```txt
+^5.0.0 || ^6.0.0 || ^7.0.0
+```

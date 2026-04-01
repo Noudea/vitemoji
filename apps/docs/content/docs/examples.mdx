@@ -1,0 +1,111 @@
+---
+title: Examples
+description: See how vitemoji rewrites JSX text with different matching modes.
+---
+
+## Shortcodes
+
+Default mode matches shortcodes like `:fire:`.
+
+```tsx
+export function App() {
+  return <p>:fire:</p>;
+}
+```
+
+Output:
+
+```tsx
+export function App() {
+  return <p>🔥</p>;
+}
+```
+
+## Names
+
+Enable name matching with `preset: "chaos"` or `matchBy.names`.
+
+```ts
+vitemoji({
+  matchBy: {
+    shortcodes: false,
+    names: true,
+    keywords: false,
+    hexcodes: false,
+  },
+});
+```
+
+```tsx
+export function App() {
+  return <h1>hello world</h1>;
+}
+```
+
+Output:
+
+```tsx
+export function App() {
+  return <h1>👋 🌍</h1>;
+}
+```
+
+## Template literals inside JSX
+
+The plugin also rewrites template literal text inside JSX expression
+containers.
+
+```tsx
+export function App() {
+  const name = "builder";
+
+  return <p>{`smile ${name}`}</p>;
+}
+```
+
+Output:
+
+```tsx
+export function App() {
+  const name = "builder";
+
+  return <p>{`😀 ${name}`}</p>;
+}
+```
+
+## Hexcodes
+
+Enable hexcode matching if you want values like `1F525` to become emoji.
+
+```ts
+vitemoji({
+  matchBy: {
+    shortcodes: false,
+    names: false,
+    keywords: false,
+    hexcodes: true,
+  },
+});
+```
+
+```tsx
+export function App() {
+  return <p>1F525</p>;
+}
+```
+
+Output:
+
+```tsx
+export function App() {
+  return <p>🔥</p>;
+}
+```
+
+## Matching behavior
+
+- matching is case-insensitive
+- the longest phrase wins within a category
+- matching priority is shortcodes, hexcodes, names, then keywords
+- name and keyword matching are boundary-aware, so `fire` can match but
+  `wildfire` will not

@@ -1,13 +1,100 @@
 ---
-title: Hello World
-description: Your first document
+title: Overview
+description: Install and use vitemoji to rewrite JSX UI text into emoji in Vite apps.
 ---
 
-Welcome to the docs! You can start writing documents in `/content/docs`.
+`vitemoji` is a Vite plugin that rewrites JSX UI text into emoji at build time.
 
-## What is Next?
+It parses `.jsx` and `.tsx` modules, finds text rendered in JSX, and replaces
+matching values using `emojibase-data`.
+
+## What It Does
+
+The plugin rewrites:
+
+- JSX text like ``<h1>hello world</h1>``
+- string literals rendered inside JSX like ``<p>{"hello world"}</p>``
+- template literal text rendered inside JSX like ``<p>{`smile ${name}`}</p>``
+
+The plugin does not rewrite:
+
+- files in `node_modules`
+- files outside the configured `include` pattern
+- plain strings outside JSX
+- code that fails to parse as TypeScript or JSX
+
+## Quick Example
+
+```tsx
+export function App() {
+  const name = 'builder';
+
+  return (
+    <main>
+      <h1>hello world</h1>
+      <p>{":fire:"}</p>
+      <p>{`smile ${name}`}</p>
+    </main>
+  );
+}
+```
+
+With `preset: "chaos"`, this can become:
+
+```tsx
+export function App() {
+  const name = 'builder';
+
+  return (
+    <main>
+      <h1>👋 🌍</h1>
+      <p>{"🔥"}</p>
+      <p>{`😀 ${name}`}</p>
+    </main>
+  );
+}
+```
+
+## Install From npm
+
+```bash
+pnpm add vitemoji
+```
+
+Then add the plugin to your Vite config:
+
+```ts
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
+import { vitemoji } from "vitemoji";
+
+export default defineConfig({
+  plugins: [
+    react(),
+    vitemoji(),
+  ],
+});
+```
 
 <Cards>
-  <Card title="Learn more about Next.js" href="https://nextjs.org/docs" />
-  <Card title="Learn more about Fumadocs" href="https://fumadocs.dev" />
+  <Card
+    title="Installation"
+    href="/docs/installation"
+    description="Install the package from npm and wire it into Vite."
+  />
+  <Card
+    title="Configuration"
+    href="/docs/configuration"
+    description="Learn the available options, presets, locales, and match modes."
+  />
+  <Card
+    title="Examples"
+    href="/docs/examples"
+    description="See shortcodes, names, keywords, and hexcode matching in practice."
+  />
+  <Card
+    title="FAQ"
+    href="/docs/faq"
+    description="Understand what the plugin transforms and what it intentionally skips."
+  />
 </Cards>

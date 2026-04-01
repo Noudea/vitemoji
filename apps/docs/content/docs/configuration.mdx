@@ -1,0 +1,195 @@
+---
+title: Configuration
+description: Configure include rules, locales, shortcode datasets, and match categories.
+---
+
+## Options
+
+```ts
+type VitemojiOptions = {
+  include?: RegExp;
+  locales?: VitemojiLocale[];
+  preset?: "safe" | "chaos";
+  shortcodePresets?: (
+    | "cldr"
+    | "cldr-native"
+    | "discord"
+    | "emojibase"
+    | "emojibase-native"
+    | "github"
+    | "iamcal"
+    | "joypixels"
+    | "slack"
+  )[];
+  matchBy?: {
+    shortcodes?: boolean;
+    names?: boolean;
+    keywords?: boolean;
+    hexcodes?: boolean;
+  };
+};
+```
+
+## `include`
+
+Controls which files are transformed.
+
+Default:
+
+```ts
+/\.[jt]sx$/
+```
+
+Example:
+
+```ts
+vitemoji({
+  include: /src\/.*\.[jt]sx$/,
+});
+```
+
+## `preset`
+
+Available presets:
+
+- `safe`: shortcodes only
+- `chaos`: shortcodes, names, keywords, and hexcodes
+
+Example:
+
+```ts
+vitemoji({
+  preset: "chaos",
+});
+```
+
+## `matchBy`
+
+Use `matchBy` for direct control over which categories are enabled.
+
+```ts
+vitemoji({
+  matchBy: {
+    shortcodes: true,
+    names: true,
+    keywords: false,
+    hexcodes: false,
+  },
+});
+```
+
+If `preset` and `matchBy` are both provided, `matchBy` overrides the preset.
+
+## `locales`
+
+Default:
+
+```ts
+["en"]
+```
+
+Supported locales:
+
+```ts
+[
+  "bn",
+  "da",
+  "de",
+  "en",
+  "en-gb",
+  "es",
+  "es-mx",
+  "et",
+  "fi",
+  "fr",
+  "hi",
+  "hu",
+  "it",
+  "ja",
+  "ko",
+  "lt",
+  "ms",
+  "nb",
+  "nl",
+  "pl",
+  "pt",
+  "ru",
+  "sv",
+  "th",
+  "uk",
+  "vi",
+  "zh",
+  "zh-hant",
+]
+```
+
+Example:
+
+```ts
+vitemoji({
+  preset: "chaos",
+  locales: ["en", "fr", "ja"],
+});
+```
+
+## `shortcodePresets`
+
+Default:
+
+```ts
+["github"]
+```
+
+Supported shortcode presets:
+
+- `cldr`
+- `cldr-native`
+- `discord`
+- `emojibase`
+- `emojibase-native`
+- `github`
+- `iamcal`
+- `joypixels`
+- `slack`
+
+Aliases:
+
+- `discord` resolves to the `joypixels` dataset
+- `slack` resolves to the `iamcal` dataset
+
+If none of the requested shortcode presets support one of your selected locales,
+the plugin throws an error at setup time.
+
+Example:
+
+```ts
+vitemoji({
+  shortcodePresets: ["github", "cldr", "joypixels"],
+});
+```
+
+## Full example
+
+```ts
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
+import { vitemoji } from "vitemoji";
+
+export default defineConfig({
+  plugins: [
+    react(),
+    vitemoji({
+      preset: "chaos",
+      include: /\.[jt]sx$/,
+      locales: ["en", "fr", "ja"],
+      shortcodePresets: ["github", "cldr", "joypixels"],
+      matchBy: {
+        shortcodes: true,
+        names: true,
+        keywords: true,
+        hexcodes: false,
+      },
+    }),
+  ],
+});
+```
