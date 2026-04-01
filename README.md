@@ -1,6 +1,6 @@
 # vitemoji
 
-`vitemoji` is a Vite plugin that rewrites JSX UI text into emoji at build time.
+`vitemoji` is a Vite plugin and text utility that rewrites UI text into emoji.
 
 It is designed for React-style JSX and TSX files. The plugin parses your source,
 finds text rendered in JSX, and replaces matching tokens with emoji using
@@ -12,7 +12,7 @@ finds text rendered in JSX, and replaces matching tokens with emoji using
 pnpm add vitemoji
 ```
 
-## Usage
+## Plugin Usage
 
 Add the plugin to your Vite config:
 
@@ -54,7 +54,67 @@ export function App() {
 }
 ```
 
-## What It Rewrites
+## `emojifyText()`
+
+`vitemoji` also exports a framework-agnostic text utility:
+
+```ts
+import { emojifyText } from "vitemoji";
+
+const output = emojifyText(":fire:");
+// "🔥"
+```
+
+Default `emojifyText()` behavior:
+
+- `locales: ["en"]`
+- `shortcodePresets: ["cldr"]`
+- shortcode-only matching
+
+Example with broader matching:
+
+```ts
+import { emojifyText } from "vitemoji";
+
+const output = emojifyText("hello world", {
+  preset: "chaos",
+  locales: ["en"],
+  shortcodePresets: ["cldr"],
+});
+
+// "👋 🌍️"
+```
+
+Text utility options:
+
+```ts
+type EmojifyTextOptions = {
+  locales?: VitemojiLocale[];
+  preset?: "safe" | "chaos";
+  shortcodePresets?: (
+    | "cldr"
+    | "cldr-native"
+    | "discord"
+    | "emojibase"
+    | "emojibase-native"
+    | "github"
+    | "iamcal"
+    | "joypixels"
+    | "slack"
+  )[];
+  matchBy?: {
+    shortcodes?: boolean;
+    names?: boolean;
+    keywords?: boolean;
+    hexcodes?: boolean;
+  };
+};
+```
+
+If none of the requested shortcode presets support the requested locales,
+`emojifyText()` throws a descriptive error instead of silently falling back.
+
+## What The Plugin Rewrites
 
 `vitemoji` rewrites:
 
@@ -212,7 +272,7 @@ Chooses which shortcode sets are loaded.
 Default:
 
 ```ts
-["github"]
+["cldr"]
 ```
 
 Supported values:

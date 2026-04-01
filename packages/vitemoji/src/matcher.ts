@@ -80,6 +80,18 @@ export function createEmojiMatcher(matchMaps: EmojiMatchMaps): EmojiMatcher {
   };
 }
 
+export function filterEmojiMatchMaps(
+  matchMaps: EmojiMatchMaps,
+  matchBy: Required<VitemojiMatchBy>,
+): EmojiMatchMaps {
+  return {
+    shortcodes: matchBy.shortcodes ? matchMaps.shortcodes : {},
+    hexcodes: matchBy.hexcodes ? matchMaps.hexcodes : {},
+    names: matchBy.names ? matchMaps.names : {},
+    keywords: matchBy.keywords ? matchMaps.keywords : {},
+  };
+}
+
 function createEmojiMatchPasses(matchMaps: EmojiMatchMaps): EmojiMatchPass[] {
   return [
     createEmojiMatchPass(matchMaps.shortcodes),

@@ -30,6 +30,12 @@ type VitemojiOptions = {
 };
 ```
 
+For plain strings, `vitemoji` also exports:
+
+```ts
+type EmojifyTextOptions = Omit<VitemojiOptions, "include">;
+```
+
 ## `include`
 
 Controls which files are transformed.
@@ -137,7 +143,7 @@ vitemoji({
 Default:
 
 ```ts
-["github"]
+ ["cldr"]
 ```
 
 Supported shortcode presets:

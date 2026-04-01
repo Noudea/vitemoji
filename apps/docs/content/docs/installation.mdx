@@ -31,7 +31,7 @@ This is enough to enable the default behavior:
 - transform `.jsx` and `.tsx` files
 - skip `node_modules`
 - load the `en` locale
-- use the `github` shortcode preset
+- use the `cldr` shortcode preset
 - match shortcodes only
 
 ## 3. Write JSX UI text
@@ -65,6 +65,17 @@ import { vitemoji } from "vitemoji";
 export default defineConfig({
   plugins: [react(), vitemoji()],
 });
+```
+
+## Plain text utility
+
+If you do not need the Vite transform, you can use `emojifyText()` directly:
+
+```ts
+import { emojifyText } from "vitemoji";
+
+emojifyText(":fire:");
+// "🔥"
 ```
 
 ## Peer dependency

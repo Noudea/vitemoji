@@ -1,6 +1,6 @@
 # vitemoji
 
-`vitemoji` is a Vite plugin that rewrites JSX UI text into emoji.
+`vitemoji` is a Vite plugin and text utility that rewrites UI text into emoji.
 
 It parses `.jsx` and `.tsx` modules, finds text rendered in JSX, and replaces
 matching values using `emojibase-data`.
@@ -33,7 +33,7 @@ By default, `vitemoji`:
 - transforms `.jsx` and `.tsx` files
 - skips `node_modules`
 - loads the `en` locale
-- uses the `github` shortcode preset
+- uses the `cldr` shortcode preset
 - matches shortcodes only
 
 That means this:
@@ -62,6 +62,58 @@ The plugin rewrites:
 
 The plugin does not rewrite plain strings outside JSX.
 
+## `emojifyText()`
+
+`vitemoji` also exports a framework-agnostic text utility:
+
+```ts
+import { emojifyText } from "vitemoji";
+
+const output = emojifyText(":fire:");
+// "🔥"
+```
+
+Default `emojifyText()` behavior:
+
+- `locales: ["en"]`
+- `shortcodePresets: ["cldr"]`
+- shortcode-only matching
+
+Example with broader matching:
+
+```ts
+import { emojifyText } from "vitemoji";
+
+const output = emojifyText("hello world", {
+  preset: "chaos",
+  locales: ["en"],
+  shortcodePresets: ["cldr"],
+});
+
+// "👋 🌍️"
+```
+
+Text utility options:
+
+```ts
+import { type EmojifyTextOptions } from "vitemoji";
+
+const options: EmojifyTextOptions = {
+  locales: ["en"],
+  preset: "safe",
+  shortcodePresets: ["cldr"],
+  matchBy: {
+    shortcodes: true,
+    names: false,
+    keywords: false,
+    hexcodes: false,
+  },
+};
+```
+
+If none of the requested shortcode presets support the requested locales,
+`emojifyText()` throws a descriptive error.
+
 ## Options
 
 ```ts
@@ -71,7 +123,7 @@ const options: VitemojiOptions = {
   include: /\.[jt]sx$/,
   locales: ["en"],
   preset: "safe",
-  shortcodePresets: ["github"],
+  shortcodePresets: ["cldr"],
   matchBy: {
     shortcodes: true,
     names: false,

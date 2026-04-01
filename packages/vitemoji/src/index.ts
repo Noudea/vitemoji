@@ -1,4 +1,6 @@
+export { emojifyText } from "./emojify-text.js";
 export type {
+  EmojifyTextOptions,
   VitemojiLocale,
   VitemojiMatchBy,
   VitemojiOptions,

@@ -1,16 +1,18 @@
 import type { Plugin } from "vite";
 
-import { loadEmojibaseEntries } from "./data/emojibase.js";
-import { createEmojiMatcher, createEmojiMatchMaps } from "./matcher.js";
+import { loadGeneratedEmojiMatchMaps } from "./data/generated.js";
+import { createEmojiMatcher, filterEmojiMatchMaps } from "./matcher.js";
 import { resolveVitemojiOptions, type VitemojiOptions } from "./options.js";
 import { transformUiText } from "./transforms/ui-text.js";
 
 export function vitemoji(options: VitemojiOptions = {}): Plugin {
   const { include, locales, matchBy, shortcodePresets } =
     resolveVitemojiOptions(options);
-  const emojiEntries = loadEmojibaseEntries(locales, shortcodePresets);
   const emojiMatcher = createEmojiMatcher(
-    createEmojiMatchMaps(emojiEntries, matchBy),
+    filterEmojiMatchMaps(
+      loadGeneratedEmojiMatchMaps(locales, shortcodePresets),
+      matchBy,
+    ),
   );
 
   return {

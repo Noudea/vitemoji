@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: Install and use vitemoji to rewrite JSX UI text into emoji in Vite apps.
+description: Install and use vitemoji as a Vite plugin or plain text utility.
 ---
 
-`vitemoji` is a Vite plugin that rewrites JSX UI text into emoji at build time.
+`vitemoji` is a Vite plugin and text utility that rewrites UI text into emoji.
 
 It parses `.jsx` and `.tsx` modules, finds text rendered in JSX, and replaces
 matching values using `emojibase-data`.
@@ -74,6 +74,15 @@ export default defineConfig({
     vitemoji(),
   ],
 });
+```
+
+You can also use the plain text utility without the plugin:
+
+```ts
+import { emojifyText } from "vitemoji";
+
+emojifyText(":fire:");
+// "🔥"
 ```
 
 <Cards>

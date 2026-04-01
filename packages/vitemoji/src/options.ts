@@ -49,24 +49,30 @@ export interface VitemojiMatchBy {
   hexcodes?: boolean;
 }
 
-export interface VitemojiOptions {
-  include?: RegExp;
+export interface EmojifyTextOptions {
   locales?: VitemojiLocale[];
   preset?: VitemojiPreset;
   shortcodePresets?: VitemojiShortcodePreset[];
   matchBy?: VitemojiMatchBy;
 }
 
-export interface ResolvedVitemojiOptions {
-  include: RegExp;
+export interface VitemojiOptions extends EmojifyTextOptions {
+  include?: RegExp;
+}
+
+export interface ResolvedEmojifyTextOptions {
   locales: VitemojiLocale[];
   matchBy: Required<VitemojiMatchBy>;
   shortcodePresets: VitemojiShortcodePreset[];
 }
 
+export interface ResolvedVitemojiOptions extends ResolvedEmojifyTextOptions {
+  include: RegExp;
+}
+
 const DEFAULT_INCLUDE = /\.[jt]sx$/;
 const DEFAULT_LOCALES: VitemojiLocale[] = ["en"];
-const DEFAULT_SHORTCODE_PRESETS: VitemojiShortcodePreset[] = ["github"];
+const DEFAULT_SHORTCODE_PRESETS: VitemojiShortcodePreset[] = ["cldr"];
 
 const DEFAULT_MATCH_BY: Required<VitemojiMatchBy> = {
   shortcodes: true,
@@ -90,15 +96,14 @@ const PRESET_MATCH_BY: Record<VitemojiPreset, Required<VitemojiMatchBy>> = {
   },
 };
 
-export function resolveVitemojiOptions(
-  options: VitemojiOptions = {},
-): ResolvedVitemojiOptions {
+export function resolveEmojifyTextOptions(
+  options: EmojifyTextOptions = {},
+): ResolvedEmojifyTextOptions {
   const baseMatchBy = options.preset
     ? PRESET_MATCH_BY[options.preset]
     : DEFAULT_MATCH_BY;
 
   return {
-    include: options.include ?? DEFAULT_INCLUDE,
     locales: resolveLocales(options),
     matchBy: {
       ...baseMatchBy,
@@ -108,7 +113,16 @@ export function resolveVitemojiOptions(
   };
 }
 
-function resolveLocales(options: VitemojiOptions): VitemojiLocale[] {
+export function resolveVitemojiOptions(
+  options: VitemojiOptions = {},
+): ResolvedVitemojiOptions {
+  return {
+    include: options.include ?? DEFAULT_INCLUDE,
+    ...resolveEmojifyTextOptions(options),
+  };
+}
+
+function resolveLocales(options: EmojifyTextOptions): VitemojiLocale[] {
   const locales = options.locales ?? DEFAULT_LOCALES;
   const normalizedLocales = Array.from(new Set(locales));
 
@@ -116,7 +130,7 @@ function resolveLocales(options: VitemojiOptions): VitemojiLocale[] {
 }
 
 function resolveShortcodePresets(
-  options: VitemojiOptions,
+  options: EmojifyTextOptions,
 ): VitemojiShortcodePreset[] {
   const shortcodePresets =
     options.shortcodePresets ?? DEFAULT_SHORTCODE_PRESETS;
