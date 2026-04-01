@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "pnpm --filter vitemoji build && pnpm --filter playground build",
+    "docs:build": "pnpm --filter docs build",
+    "docs:dev": "pnpm --filter docs dev",
     "dev": "pnpm --filter playground dev",
     "test": "pnpm --filter vitemoji test",
     "typecheck": "pnpm --filter vitemoji typecheck && pnpm --filter playground typecheck"
