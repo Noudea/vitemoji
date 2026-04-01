@@ -3,15 +3,11 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "workspaces": [
-    "packages/*",
-    "apps/*"
-  ],
   "scripts": {
-    "build": "npm run build -w vitemoji && npm run build -w playground",
-    "dev": "npm run dev -w playground",
-    "test": "npm run test -w vitemoji",
-    "typecheck": "npm run typecheck -w vitemoji && npm run typecheck -w playground"
+    "build": "pnpm --filter vitemoji build && pnpm --filter playground build",
+    "dev": "pnpm --filter playground dev",
+    "test": "pnpm --filter vitemoji test",
+    "typecheck": "pnpm --filter vitemoji typecheck && pnpm --filter playground typecheck"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.7.0",
