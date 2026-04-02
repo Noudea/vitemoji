@@ -13,7 +13,7 @@ No. `vitemoji` only rewrites text that is rendered in JSX:
 
 It does not rewrite ordinary strings elsewhere in your code.
 
-## Should I use `emojifyText()` or `useEmojifier()`?
+## Should I use `emojifyText()`, `useEmojifier()`, or `useCreateEmojifier()`?
 
 Use `emojifyText()` when you want a synchronous helper for:
 
@@ -26,8 +26,12 @@ Use `useEmojifier()` in React apps when you want:
 - browser/runtime usage
 - locale-aware loading in the client
 - full locale and shortcode preset control
+- one shared config for an app or subtree
 
-`useEmojifier()` is the recommended React runtime API.
+Use `useCreateEmojifier()` when only one screen or one component needs runtime
+loading and you do not want to add a provider.
+
+`VitemojiProvider` + `useEmojifier()` is the recommended React runtime API.
 
 ## Does it transform JavaScript files?
 
@@ -57,13 +61,14 @@ These rules apply:
 - the longest phrase wins within a match category
 - category priority is shortcodes, hexcodes, names, then keywords
 
-## Why does `useEmojifier()` load asynchronously?
+## Why does React runtime usage load asynchronously?
 
 Runtime React usage loads generated locale and shortcode chunks on demand.
 
 That keeps the initial browser bundle smaller than loading every locale and every
-shortcode dataset up front. The hook returns `isReady` so your app can show a
-loading state while those chunks are being fetched.
+shortcode dataset up front. `useCreateEmojifier()` returns `isReady` so a local
+component can show a loading state, while `VitemojiProvider` can handle loading
+for a whole subtree.
 
 ## Can I mix locales and shortcode presets?
 

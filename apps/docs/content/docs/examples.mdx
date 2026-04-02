@@ -140,27 +140,36 @@ This is the sync helper. For React/browser runtime usage, prefer
 
 ## React runtime hook
 
-`useEmojifier()` gives React apps the same matching behavior with async runtime
-loading:
+`VitemojiProvider` + `useEmojifier()` is the recommended React runtime model:
 
 ```tsx
 import { useState } from "react";
-import { useEmojifier } from "vitemoji/react";
+import { VitemojiProvider, useEmojifier } from "vitemoji/react";
 
-export function EmojiPreview() {
+function EmojiPreview({ value }: { value: string }) {
+  const emojifyText = useEmojifier();
+
+  return <p>{emojifyText(value)}</p>;
+}
+
+export function App() {
   const [value, setValue] = useState("hello world");
-  const { isReady, error, emojifyText } = useEmojifier({
-    preset: "chaos",
-    locales: ["en", "fr"],
-    shortcodePresets: ["cldr", "emojibase"],
-  });
 
   return (
-    <>
+    <VitemojiProvider
+      fallback={<small>Loading emoji data...</small>}
+      options={{
+        preset: "chaos",
+        locales: ["en", "fr"],
+        shortcodePresets: ["cldr", "emojibase"],
+      }}
+    >
       <input value={value} onChange={(event) => setValue(event.target.value)} />
-      <p>{error ? error.message : emojifyText(value)}</p>
-      <small>{isReady ? "Ready" : "Loading emoji data..."}</small>
-    </>
+      <EmojiPreview value={value} />
+    </VitemojiProvider>
   );
 }
 ```
+
+If only one screen or one component needs runtime loading, use
+`useCreateEmojifier()` as the local escape hatch.

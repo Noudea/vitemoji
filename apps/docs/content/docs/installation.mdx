@@ -89,33 +89,42 @@ prefer `useEmojifier()` instead.
 
 ## React runtime hook
 
-For browser/runtime usage in React, prefer `useEmojifier()`:
+For browser/runtime usage in React, prefer the provider-based API:
 
 ```ts
-import { useEmojifier } from "vitemoji/react";
+import { VitemojiProvider, useEmojifier } from "vitemoji/react";
 ```
 
 ```tsx
 import { useState } from "react";
-import { useEmojifier } from "vitemoji/react";
+import { VitemojiProvider, useEmojifier } from "vitemoji/react";
 
-export function EmojiPreview() {
+function EmojiPreview({ value }: { value: string }) {
+  const emojifyText = useEmojifier();
+
+  return <p>{emojifyText(value)}</p>;
+}
+
+export function App() {
   const [value, setValue] = useState("hello world");
-  const { isReady, error, emojifyText } = useEmojifier({
-    preset: "chaos",
-    locales: ["en", "fr"],
-    shortcodePresets: ["cldr", "emojibase"],
-  });
 
   return (
-    <>
+    <VitemojiProvider
+      fallback={<small>Loading emoji data...</small>}
+      options={{
+        preset: "chaos",
+        locales: ["en", "fr"],
+        shortcodePresets: ["cldr", "emojibase"],
+      }}
+    >
       <input value={value} onChange={(event) => setValue(event.target.value)} />
-      <p>{error ? error.message : emojifyText(value)}</p>
-      <small>{isReady ? "Ready" : "Loading emoji data..."}</small>
-    </>
+      <EmojiPreview value={value} />
+    </VitemojiProvider>
   );
 }
 ```
+
+If only one screen needs runtime loading, use `useCreateEmojifier()` instead.
 
 ## Peer dependency
 

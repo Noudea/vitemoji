@@ -1,4 +1,11 @@
-import { useEffect, useState } from "react";
+import {
+  createContext,
+  type PropsWithChildren,
+  type ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 import {
   type EmojifyTextOptions,
@@ -12,16 +19,22 @@ import {
 import { createEmojifier, type Emojifier } from "./create-emojifier.js";
 
 const passthroughEmojifier: Emojifier = (input) => input;
+const VitemojiContext = createContext<Emojifier | null>(null);
 
-export interface UseEmojifierResult {
+export interface UseCreateEmojifierResult {
   isReady: boolean;
   error: Error | null;
   emojifyText: Emojifier;
 }
 
-export function useEmojifier(
+export interface VitemojiProviderProps extends PropsWithChildren {
+  fallback?: ReactNode;
+  options?: EmojifyTextOptions;
+}
+
+export function useCreateEmojifier(
   options: EmojifyTextOptions = {},
-): UseEmojifierResult {
+): UseCreateEmojifierResult {
   const resolvedOptionsKey = JSON.stringify(resolveEmojifyTextOptions(options));
   const [isReady, setIsReady] = useState(false);
   const [error, setError] = useState<Error | null>(null);
@@ -70,6 +83,38 @@ export function useEmojifier(
     error,
     emojifyText,
   };
+}
+
+export function VitemojiProvider({
+  children,
+  fallback = null,
+  options = {},
+}: VitemojiProviderProps) {
+  const { isReady, error, emojifyText } = useCreateEmojifier(options);
+
+  if (error) {
+    throw error;
+  }
+
+  if (!isReady) {
+    return <>{fallback}</>;
+  }
+
+  return (
+    <VitemojiContext.Provider value={emojifyText}>
+      {children}
+    </VitemojiContext.Provider>
+  );
+}
+
+export function useEmojifier(): Emojifier {
+  const emojifyText = useContext(VitemojiContext);
+
+  if (!emojifyText) {
+    throw new Error("useEmojifier must be used within a VitemojiProvider.");
+  }
+
+  return emojifyText;
 }
 
 export type {

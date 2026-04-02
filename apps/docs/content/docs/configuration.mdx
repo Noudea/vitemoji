@@ -40,6 +40,10 @@ For React runtime usage, `vitemoji/react` exports:
 
 ```ts
 type UseEmojifierResult = {
+  emojifyText: (input: string) => string;
+};
+
+type UseCreateEmojifierResult = {
   isReady: boolean;
   error: Error | null;
   emojifyText: (input: string) => string;

@@ -127,19 +127,51 @@ If none of the requested shortcode presets support the requested locales,
 
 For React runtime usage, `vitemoji` exposes:
 
-```ts
-import { useEmojifier } from "vitemoji/react";
-```
+- `VitemojiProvider`
+- `useEmojifier()`
+- `useCreateEmojifier()`
 
-Example:
+Recommended app/subtree usage:
 
 ```tsx
 import { useState } from "react";
-import { useEmojifier } from "vitemoji/react";
+import { VitemojiProvider, useEmojifier } from "vitemoji/react";
 
-export function EmojiPreview() {
+function EmojiPreview({ value }: { value: string }) {
+  const emojifyText = useEmojifier();
+
+  return <p>{emojifyText(value)}</p>;
+}
+
+export function App() {
   const [value, setValue] = useState("hello world");
-  const { isReady, error, emojifyText } = useEmojifier({
+
+  return (
+    <VitemojiProvider
+      fallback={<small>Loading emoji data...</small>}
+      options={{
+        preset: "chaos",
+        locales: ["en", "fr"],
+        shortcodePresets: ["cldr", "emojibase"],
+      }}
+    >
+      <input value={value} onChange={(event) => setValue(event.target.value)} />
+      <EmojiPreview value={value} />
+    </VitemojiProvider>
+  );
+}
+```
+
+If only one screen or one component needs runtime emoji loading, use the local
+escape hatch instead:
+
+```tsx
+import { useState } from "react";
+import { useCreateEmojifier } from "vitemoji/react";
+
+export function LocalEmojiPreview() {
+  const [value, setValue] = useState("hello world");
+  const { isReady, error, emojifyText } = useCreateEmojifier({
     preset: "chaos",
     locales: ["en", "fr"],
     shortcodePresets: ["cldr", "emojibase"],
@@ -155,8 +187,7 @@ export function EmojiPreview() {
 }
 ```
 
-`useEmojifier()` is the recommended browser/runtime API when you want full locale
-and shortcode preset control in React.
+`VitemojiProvider` + `useEmojifier()` is the recommended React runtime API.
 
 ## Options
 
